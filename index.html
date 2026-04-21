@@ -2,313 +2,584 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DayOS">
 <meta name="theme-color" content="#0a0a0f">
 <title>DayOS</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: -apple-system, system-ui, sans-serif; }
-body { background: #0a0a0f; color: #e8e4d9; min-height: 100vh; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
-.app { max-width: 480px; margin: 0 auto; padding: 20px 20px 100px; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; }
-.logo { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
-.logo span { color: #7c6af7; }
-.date { font-size: 11px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
-.streak { background: #1a1a2e; border: 1px solid #7c6af7; color: #7c6af7; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
-.section-title { font-size: 12px; color: #7c6af7; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-.section-sub { font-size: 12px; color: #666; margin-bottom: 20px; }
-.card { background: #111118; border: 1px solid #1e1e2e; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-.card-title { font-size: 10px; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
-.stat { background: #111118; border: 1px solid #1e1e2e; border-radius: 12px; padding: 12px; text-align: center; }
-.stat-v { font-size: 22px; font-weight: 700; }
-.stat-l { font-size: 9px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
-.bars { display: flex; gap: 6px; align-items: flex-end; height: 60px; }
-.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.bar { width: 100%; border-radius: 3px; min-height: 4px; transition: height 0.4s; }
-.bar-lbl { font-size: 9px; color: #444; }
-.status-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #1a1a2e; }
-.status-row:last-child { border-bottom: none; }
-.check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #333; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; margin-right: 10px; }
-.check.done { background: #4ade80; border-color: #4ade80; color: #0a0a0f; }
-.btn-sm { background: transparent; border: 1px solid #7c6af7; color: #7c6af7; border-radius: 8px; padding: 4px 12px; font-size: 11px; cursor: pointer; }
-label { display: block; font-size: 10px; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; margin-top: 14px; }
-input, textarea { width: 100%; background: #111118; border: 1px solid #1e1e2e; border-radius: 10px; padding: 12px; color: #e8e4d9; font-size: 16px; font-family: inherit; -webkit-appearance: none; }
-textarea { resize: none; font-size: 13px; line-height: 1.6; }
-input[type="range"] { -webkit-appearance: none; background: transparent; padding: 0; border: none; accent-color: #7c6af7; }
-.btn { width: 100%; background: #7c6af7; color: white; border: none; border-radius: 12px; padding: 16px; font-size: 14px; font-weight: 600; margin-top: 16px; cursor: pointer; font-family: inherit; }
-.btn:disabled { background: #1e1e2e; color: #555; }
-.btn2 { width: 100%; background: transparent; border: 1px solid #333; color: #888; border-radius: 12px; padding: 14px; margin-top: 12px; font-size: 13px; cursor: pointer; font-family: inherit; }
-.ai-box { background: #111118; border: 1px solid #7c6af7; border-radius: 12px; padding: 18px; margin-bottom: 14px; }
-.ai-box .card-title { color: #7c6af7; }
-.ai-text { font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
-.toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1a1a2e; }
-.toggle-row:last-child { border-bottom: none; }
-.toggle { width: 42px; height: 24px; border-radius: 12px; background: #333; position: relative; cursor: pointer; flex-shrink: 0; }
-.toggle.on { background: #7c6af7; }
-.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; transition: left 0.2s; }
-.toggle.on::after { left: 21px; }
-.nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #0d0d15; border-top: 1px solid #1e1e2e; display: flex; padding: 8px 0 calc(env(safe-area-inset-bottom) + 8px); }
-.nav button { flex: 1; background: none; border: none; color: #444; padding: 8px 0; font-family: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.nav button.active { color: #7c6af7; }
-.nav-icon { font-size: 20px; }
-.nav-lbl { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
-.empty { text-align: center; padding: 30px 20px; color: #555; font-size: 13px; border: 1px dashed #333; border-radius: 12px; }
-.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; display: flex; align-items: flex-end; }
-.modal { background: #13131f; width: 100%; max-width: 480px; margin: 0 auto; border-radius: 20px 20px 0 0; padding: 24px 20px calc(env(safe-area-inset-bottom) + 24px); }
-.modal h2 { font-size: 18px; margin-bottom: 10px; }
-.modal p { font-size: 12px; color: #888; line-height: 1.6; margin-bottom: 16px; }
-.modal a { color: #7c6af7; }
-.err { color: #f87171; font-size: 12px; margin-top: 8px; }
+:root{
+  --bg:#0a0a0f;--card:#13131f;--card-hi:#1a1a2a;
+  --border:#1e1e2e;--border-hi:#2a2a3e;
+  --accent:#7c6af7;--accent-hi:#9580ff;
+  --text:#e8e4d9;--dim:#888;--muted:#444;
+  --green:#4ade80;--yellow:#facc15;--red:#f87171;--orange:#fb923c;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;min-height:100vh;overscroll-behavior:none}
+body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+#app{max-width:480px;margin:0 auto;padding:12px 18px 110px;min-height:100vh}
+.hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.hdr .date{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.hdr .streak{font-size:12px;color:var(--accent)}
+h1{font-size:32px;font-weight:800;letter-spacing:-1.5px;margin-bottom:18px}
+h1 span{color:var(--accent)}
+h2{font-size:18px;font-weight:700;margin:20px 0 10px}
+.section{font-size:10px;color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;margin:22px 0 10px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
+.card-lg{padding:20px}
+.card h3{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:600}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
+.stat .v{font-size:24px;font-weight:700;letter-spacing:-1px}
+.stat .l{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;font-weight:600}
+.weekchart{height:140px;display:flex;align-items:flex-end;gap:6px;padding:12px 0}
+.weekbar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.weekbar .b{width:100%;border-radius:6px;min-height:6px;transition:height .5s}
+.weekbar .b.today{box-shadow:0 0 12px var(--accent)}
+.weekbar .lbl{font-size:9px;color:var(--muted);letter-spacing:1px;font-weight:600}
+.weekbar .score{font-size:10px;color:var(--dim);font-weight:700}
+.weekbar.empty .b{background:var(--border)!important;opacity:.5}
+.legend{display:flex;gap:14px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--dim)}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+.mood-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.mood{flex:1;min-width:54px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;font-size:11px;transition:.15s}
+.mood .ic{font-size:20px;display:block;margin-bottom:2px}
+.mood.active{border-color:var(--accent);background:var(--card-hi);transform:scale(1.05)}
+.energy{display:flex;gap:8px;margin-top:8px;align-items:center;justify-content:center;padding:8px 0}
+.edot{width:32px;height:32px;border-radius:50%;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--dim);transition:.15s}
+.edot.active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.15)}
+label{display:block;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 6px;font-weight:600}
+input,textarea,select{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;color:var(--text);font-size:15px;font-family:inherit;outline:none;-webkit-appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+textarea{resize:none;font-size:13px;line-height:1.6}
+.checkrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.checkrow:last-child{border:none}
+.checkrow .lbl{font-size:13px;color:var(--text);flex:1}
+.checkrow .lbl .em{margin-right:8px}
+.sw{width:46px;height:26px;border-radius:13px;background:var(--muted);position:relative;cursor:pointer;transition:.2s;flex-shrink:0}
+.sw.on{background:var(--accent)}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on::after{left:23px}
+.btn{width:100%;background:var(--accent);border:none;border-radius:14px;padding:16px;color:#fff;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:16px;transition:.15s}
+.btn:active{transform:scale(0.98);background:var(--accent-hi)}
+.btn:disabled{background:var(--border);color:var(--dim)}
+.btn-2{background:transparent;border:1px solid var(--border);color:var(--dim)}
+.btn-2:active{background:var(--card)}
+.btn-danger{background:var(--red)}
+.btn-row{display:flex;gap:8px}
+.btn-row .btn{margin-top:8px}
+.ai-box{background:linear-gradient(180deg,rgba(124,106,247,0.08),var(--card));border:1px solid var(--accent);border-radius:16px;padding:20px;margin:14px 0;white-space:pre-wrap;font-size:13px;line-height:1.8}
+.ai-box h3{color:var(--accent);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:700}
+.loading{text-align:center;padding:60px 0;color:var(--dim);font-size:13px}
+.spinner{display:inline-block;width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:40px 20px;color:var(--dim);font-size:13px;border:1.5px dashed var(--border);border-radius:16px;line-height:1.7}
+.empty .big{font-size:32px;margin-bottom:12px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(13,13,21,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:50}
+.nav button{flex:1;background:none;border:none;color:var(--muted);font-family:inherit;padding:8px 4px;cursor:pointer;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.nav button.on{color:var(--accent)}
+.nav .ic{font-size:22px;display:block;margin-bottom:3px}
+.toast{position:fixed;top:calc(20px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:var(--card-hi);border:1px solid var(--accent);color:var(--text);padding:10px 18px;border-radius:20px;font-size:12px;z-index:200;font-weight:600}
+.screen-time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.st-opt{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 4px;text-align:center;font-size:11px;color:var(--dim);cursor:pointer;font-weight:600}
+.st-opt.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.insight{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.insight:last-child{border:none}
+.insight .k{flex:1;color:var(--dim)}
+.insight .v{color:var(--text);font-weight:700}
+.insight .v.good{color:var(--green)}
+.insight .v.bad{color:var(--red)}
+.small{font-size:11px;color:var(--dim);text-align:center;margin-top:8px}
 </style>
 </head>
 <body>
-
-<div class="app" id="app"></div>
-
+<div id="app"></div>
 <nav class="nav">
-  <button onclick="go('dashboard')" id="n-dashboard" class="active"><span class="nav-icon">⚡</span><span class="nav-lbl">Today</span></button>
-  <button onclick="go('morning')" id="n-morning"><span class="nav-icon">☀️</span><span class="nav-lbl">Morning</span></button>
-  <button onclick="go('evening')" id="n-evening"><span class="nav-icon">🌙</span><span class="nav-lbl">Evening</span></button>
-  <button onclick="go('coach')" id="n-coach"><span class="nav-icon">🎯</span><span class="nav-lbl">Coach</span></button>
+  <button onclick="go('home')" id="n-home"><span class="ic">📊</span>Week</button>
+  <button onclick="go('log')" id="n-log"><span class="ic">⚡</span>Log</button>
+  <button onclick="go('coach')" id="n-coach"><span class="ic">🎯</span>Coach</button>
+  <button onclick="go('settings')" id="n-settings"><span class="ic">⚙️</span>Settings</button>
 </nav>
-
-<div class="modal-bg" id="keyModal" style="display:none">
-  <div class="modal">
-    <h2>Connect DayOS</h2>
-    <p>Enter your free OpenRouter API key. Get one at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a> — no credit card, no age limit.</p>
-    <input type="password" id="keyInput" placeholder="sk-or-v1-..." style="margin-bottom:12px">
-    <button class="btn" onclick="saveKey()">Save & Continue</button>
-  </div>
-</div>
-
 <script>
-const TODAY = new Date().toISOString().split('T')[0];
-const IDEAL = "PB is 15, student, founder of FlowForge automation, trains badminton+weights. Ideal day: wake 5-6AM, exercise+protein+coffee, morning reading, 2hr deep work, 20min nap, free time, night routine, sleep 10PM. Wants: freedom, direction. Struggles: drift, scrolling, late nights.";
+const TODAY = new Date().toISOString().split("T")[0];
+const CTX = `You are DayOS, a direct life coach for PB, a 15-year-old builder. Founder of FlowForge automation. Trains badminton + weights. Core desires: freedom, direction, discipline. Struggles: drift, doomscrolling, late nights. Ideal day: wake 5-6AM, exercise+protein+coffee, reading/journaling, 2hr deep work, 20min nap, free time, night routine, sleep 10PM. Style: direct, structured, no fluff, no motivational clichés. Operator/builder voice like Dan Martell.`;
 
-let logs = JSON.parse(localStorage.getItem('dayos_logs') || '[]');
-let key = localStorage.getItem('dayos_key') || '';
-let screen = 'dashboard';
-let ai = '';
-let loading = false;
-let err = '';
+let view = "home", logs = [], key = "", ai = null, loading = false;
 
-let mForm = { wake: '', energy: 3, notes: '' };
-let eForm = { sleep: '', ex: false, dw: false, mr: false, nr: false, wins: '', losses: '' };
-
-function save() { localStorage.setItem('dayos_logs', JSON.stringify(logs)); }
-function saveKey() {
-  const v = document.getElementById('keyInput').value.trim();
-  if (!v) return;
-  key = v;
-  localStorage.setItem('dayos_key', v);
-  document.getElementById('keyModal').style.display = 'none';
-}
-function todayLog() { return logs.find(l => l.date === TODAY) || {}; }
-function updateToday(d) {
-  const i = logs.findIndex(l => l.date === TODAY);
-  if (i >= 0) logs[i] = { ...logs[i], ...d };
-  else logs.push({ date: TODAY, ...d });
-  save();
-}
-function score(l) {
-  if (!l || (!l.m && !l.e)) return null;
-  let s = 0;
-  const wh = parseInt((l.m?.wake || '10:00').split(':')[0]);
-  const sh = parseInt((l.e?.sleep || '23:00').split(':')[0]);
-  if (wh <= 6) s += 2; else if (wh <= 8) s += 1;
-  if (sh <= 22) s += 2; else if (sh <= 23) s += 1;
-  if (l.ex) s += 2;
-  if (l.dw) s += 2;
-  if (l.mr) s += 1;
-  if (l.nr) s += 1;
-  return Math.min(10, s);
-}
-function scoreColor(s) {
-  if (s === null) return '#1e1e2e';
-  if (s >= 7) return '#4ade80';
-  if (s >= 4) return '#facc15';
-  return '#f87171';
-}
-function getStreak() {
-  const sorted = [...logs].sort((a,b) => new Date(b.date) - new Date(a.date));
-  let n = 0;
-  for (const l of sorted) { if (score(l) >= 5) n++; else break; }
-  return n;
-}
-
+const MORNING_ROUTINE = [
+  {k:"mr_exercise", em:"💪", label:"Exercise"},
+  {k:"mr_protein", em:"🥤", label:"Protein + coffee"},
+  {k:"mr_read", em:"📖", label:"Reading / journaling"}
+];
+const EVENING_ROUTINE = [
+  {k:"er_journal", em:"📝", label:"Journal"},
+  {k:"er_shower", em:"🚿", label:"Warm shower"},
+  {k:"er_groom", em:"🧴", label:"Grooming"},
+  {k:"er_noscreen", em:"📵", label:"No screen 30min before bed"}
+];
+const MOODS = [
+  {k:"terrible", em:"😵", label:"Awful"},
+  {k:"bad", em:"😔", label:"Bad"},
+  {k:"neutral", em:"😐", label:"OK"},
+  {k:"good", em:"🙂", label:"Good"},
+  {k:"great", em:"😄", label:"Great"}
+];
+const SCREEN_TIME = [
+  {k:"low", label:"<2h", sub:"Clean"},
+  {k:"med", label:"2-4h", sub:"OK"},
+  {k:"high", label:"4-6h", sub:"Heavy"},
+  {k:"extreme", label:"6h+", sub:"Scrolled"}
+];
 const MODELS = [
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemma-2-9b-it:free',
-  'mistralai/mistral-7b-instruct:free',
-  'meta-llama/llama-3.2-3b-instruct:free'
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "google/gemma-2-9b-it:free",
+  "mistralai/mistral-7b-instruct:free",
+  "meta-llama/llama-3.1-8b-instruct:free"
 ];
 
-async function askAI(prompt) {
-  if (!key) { document.getElementById('keyModal').style.display = 'flex'; throw new Error('No key'); }
-  let lastErr = '';
-  for (const m of MODELS) {
-    try {
-      const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key, 'HTTP-Referer': 'https://dayos.app', 'X-Title': 'DayOS' },
-        body: JSON.stringify({ model: m, max_tokens: 800, messages: [{ role: 'user', content: prompt }] })
-      });
-      if (!r.ok) { const e = await r.json().catch(() => ({})); lastErr = (e.error && e.error.message) || ('HTTP ' + r.status); continue; }
-      const d = await r.json();
-      const t = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
-      if (t) return t;
-      lastErr = 'Empty reply from ' + m;
-    } catch (e) { lastErr = e.message; }
-  }
-  throw new Error(lastErr || 'All models failed');
+function load() {
+  try { logs = JSON.parse(localStorage.getItem("dayos_logs") || "[]"); } catch { logs = []; }
+  key = localStorage.getItem("dayos_key") || "";
+}
+function saveLogs() { localStorage.setItem("dayos_logs", JSON.stringify(logs)); }
+function todayLog() { return logs.find(l => l.date === TODAY) || {}; }
+function updateLog(patch) {
+  const idx = logs.findIndex(l => l.date === TODAY);
+  if (idx >= 0) logs[idx] = { ...logs[idx], ...patch };
+  else logs.push({ date: TODAY, ...patch });
+  saveLogs();
 }
 
-function go(s) { screen = s; ai = ''; err = ''; render(); }
+function scoreDay(l) {
+  if (!l) return null;
+  const hasData = l.wake || l.sleep || l.mood_morning || l.mood_evening || l.mr_exercise || l.er_shower || l.screen_time;
+  if (!hasData) return null;
+  let s = 0;
+  if (l.wake) {
+    const h = parseInt(l.wake.split(":")[0]);
+    if (h <= 6) s += 2; else if (h <= 8) s += 1;
+  }
+  if (l.sleep) {
+    const h = parseInt(l.sleep.split(":")[0]);
+    if (h <= 22) s += 2; else if (h <= 23) s += 1;
+  }
+  let mr = 0; MORNING_ROUTINE.forEach(r => { if (l[r.k]) mr++; });
+  s += Math.min(2, mr * 0.7);
+  let er = 0; EVENING_ROUTINE.forEach(r => { if (l[r.k]) er++; });
+  s += Math.min(2, er * 0.5);
+  const moodScore = {terrible:0, bad:0.2, neutral:0.5, good:0.8, great:1};
+  if (l.mood_morning) s += moodScore[l.mood_morning] || 0;
+  if (l.screen_time === "extreme") s -= 1.5;
+  else if (l.screen_time === "high") s -= 0.5;
+  return Math.max(0, Math.min(10, Math.round(s)));
+}
+
+function scoreColor(s) {
+  if (s === null) return "#1e1e2e";
+  if (s >= 8) return "#4ade80";
+  if (s >= 6) return "#7c6af7";
+  if (s >= 4) return "#facc15";
+  if (s >= 2) return "#fb923c";
+  return "#f87171";
+}
+
+function getStreak() {
+  const sorted = [...logs].sort((a,b) => new Date(b.date) - new Date(a.date));
+  let c = 0;
+  for (const l of sorted) {
+    const s = scoreDay(l);
+    if (s !== null && s >= 5) c++; else break;
+  }
+  return c;
+}
+
+function getAvgScore(days) {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  const recent = logs.filter(l => new Date(l.date) >= cutoff);
+  const scored = recent.map(scoreDay).filter(s => s !== null);
+  if (!scored.length) return null;
+  return (scored.reduce((a,b) => a+b, 0) / scored.length).toFixed(1);
+}
+
+function toast(msg) {
+  const existing = document.getElementById("toast");
+  if (existing) existing.remove();
+  const el = document.createElement("div");
+  el.id = "toast"; el.className = "toast"; el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1500);
+}
+
+function go(v) {
+  view = v; ai = null; render();
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+async function askAI(prompt) {
+  if (!key) {
+    go("settings");
+    toast("Add API key in Settings");
+    throw new Error("No API key");
+  }
+  let err = "";
+  for (const model of MODELS) {
+    try {
+      const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + key,
+          "HTTP-Referer": location.origin || "https://dayos.app",
+          "X-Title": "DayOS"
+        },
+        body: JSON.stringify({
+          model: model,
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        err = e?.error?.message || ("HTTP " + r.status);
+        continue;
+      }
+      const d = await r.json();
+      const t = d.choices?.[0]?.message?.content;
+      if (t && t.trim()) return t.trim();
+      err = "Empty response";
+    } catch(e) { err = e.message; }
+  }
+  throw new Error("All models failed. Last error: " + err);
+}
 
 function render() {
-  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('n-' + screen).classList.add('active');
-  const app = document.getElementById('app');
-  if (screen === 'dashboard') app.innerHTML = renderDash();
-  else if (screen === 'morning') app.innerHTML = renderMorning();
-  else if (screen === 'evening') app.innerHTML = renderEvening();
-  else if (screen === 'coach') app.innerHTML = renderCoach();
+  document.querySelectorAll(".nav button").forEach(b => b.classList.remove("on"));
+  const nav = document.getElementById("n-" + view);
+  if (nav) nav.classList.add("on");
+
+  const app = document.getElementById("app");
+  const dateStr = new Date().toLocaleDateString("en", { weekday:"long", month:"short", day:"numeric" });
+  const st = getStreak();
+
+  let html = `<div class="hdr"><div class="date">${dateStr}</div>${st > 0 ? `<div class="streak">🔥 ${st}-day streak</div>` : ""}</div><h1>Day<span>OS</span></h1>`;
+
+  if (loading) {
+    html += `<div class="loading"><div class="spinner"></div><br>Thinking...</div>`;
+  } else if (ai) {
+    html += `<div class="ai-box"><h3>${ai.title}</h3>${ai.text}</div><button class="btn btn-2" onclick="ai=null;render()">← Back</button>`;
+  } else {
+    if (view === "home") html += renderHome();
+    else if (view === "log") html += renderLog();
+    else if (view === "coach") html += renderCoach();
+    else if (view === "settings") html += renderSettings();
+  }
+  app.innerHTML = html;
 }
 
-function header() {
-  const streak = getStreak();
-  const date = new Date().toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' });
-  return `<div class="header"><div><div class="date">${date}</div><div class="logo">Day<span>OS</span></div></div>${streak > 0 ? `<div class="streak">🔥 ${streak}d</div>` : ''}</div>`;
-}
+function renderHome() {
+  const avg7 = getAvgScore(7);
+  const avg30 = getAvgScore(30);
+  const totalLogged = logs.filter(l => scoreDay(l) !== null).length;
 
-function renderDash() {
-  const streak = getStreak();
-  const scored = logs.filter(l => score(l) !== null);
-  const avg = scored.length ? (scored.reduce((s,l) => s + score(l), 0) / scored.length).toFixed(1) : '—';
-  const tl = todayLog();
   const last7 = Array.from({length:7}, (_,i) => {
     const d = new Date(); d.setDate(d.getDate() - (6-i));
-    const ds = d.toISOString().split('T')[0];
-    const l = logs.find(x => x.date === ds);
-    return { lbl: d.toLocaleDateString('en',{weekday:'short'}).substring(0,2).toUpperCase(), s: score(l) };
+    const ds = d.toISOString().split("T")[0];
+    const log = logs.find(l => l.date === ds);
+    const score = scoreDay(log);
+    return { ds, label: d.toLocaleDateString("en",{weekday:"short"}).substring(0,3).toUpperCase(), score, isToday: ds === TODAY };
   });
+
+  const maxH = 110;
   const bars = last7.map(x => {
-    const h = x.s !== null ? Math.max(4, (x.s/10)*52) : 4;
-    return `<div class="bar-col"><div class="bar" style="height:${h}px;background:${scoreColor(x.s)}"></div><div class="bar-lbl">${x.lbl}</div></div>`;
-  }).join('');
-  const lastAI = tl.e?.response || tl.m?.response;
-  return header() + `
-    <div class="section-title">Overview</div>
-    <div class="section-sub" style="margin-bottom:20px">Your real trajectory.</div>
+    const h = x.score !== null ? Math.max(10, (x.score/10) * maxH) : 8;
+    const empty = x.score === null ? "empty" : "";
+    const todayCls = x.isToday ? "today" : "";
+    return `<div class="weekbar ${empty}"><div class="score">${x.score !== null ? x.score : ""}</div><div class="b ${todayCls}" style="height:${h}px;background:${scoreColor(x.score)}"></div><div class="lbl">${x.label}</div></div>`;
+  }).join("");
+
+  const t = todayLog();
+  const loggedToday = scoreDay(t) !== null;
+
+  return `
     <div class="stats">
-      <div class="stat"><div class="stat-v">${streak || '—'}</div><div class="stat-l">Streak</div></div>
-      <div class="stat"><div class="stat-v">${avg}</div><div class="stat-l">Avg</div></div>
-      <div class="stat"><div class="stat-v">${logs.length}</div><div class="stat-l">Logged</div></div>
+      <div class="stat"><div class="v">${avg7 || "—"}</div><div class="l">7d avg</div></div>
+      <div class="stat"><div class="v">${avg30 || "—"}</div><div class="l">30d avg</div></div>
+      <div class="stat"><div class="v">${totalLogged}</div><div class="l">Logged</div></div>
     </div>
-    <div class="card"><div class="card-title">Last 7 Days</div><div class="bars">${bars}</div></div>
+    <div class="card card-lg">
+      <h3>This Week</h3>
+      <div class="weekchart">${bars}</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>8-10</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7c6af7"></div>6-7</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#facc15"></div>4-5</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>0-3</div>
+      </div>
+    </div>
+    ${!loggedToday ? `
+      <div class="card" style="border-color:var(--accent)">
+        <h3>Today isn't logged</h3>
+        <p style="font-size:13px;color:var(--text);line-height:1.6">One tap per habit. Takes 20 seconds.</p>
+        <button class="btn" onclick="go('log')">Log Today →</button>
+      </div>
+    ` : `
+      <div class="card">
+        <h3>Today's snapshot</h3>
+        ${t.wake ? `<div class="insight"><span class="k">Woke</span><span class="v">${t.wake}</span></div>` : ""}
+        ${t.sleep ? `<div class="insight"><span class="k">Slept</span><span class="v">${t.sleep}</span></div>` : ""}
+        ${t.mood_morning ? `<div class="insight"><span class="k">Morning mood</span><span class="v">${MOODS.find(m=>m.k===t.mood_morning)?.em||""} ${MOODS.find(m=>m.k===t.mood_morning)?.label||""}</span></div>` : ""}
+        ${t.energy ? `<div class="insight"><span class="k">Energy</span><span class="v">${t.energy}/5</span></div>` : ""}
+        ${t.screen_time ? `<div class="insight"><span class="k">Screen</span><span class="v ${t.screen_time==='extreme'?'bad':t.screen_time==='low'?'good':''}">${SCREEN_TIME.find(s=>s.k===t.screen_time)?.label||""}</span></div>` : ""}
+        <button class="btn btn-2" onclick="go('log')" style="margin-top:12px">Edit today</button>
+      </div>
+    `}
+    <div class="section">Quick insights</div>
+    <div class="card">${renderQuickInsights()}</div>
+  `;
+}
+
+function renderQuickInsights() {
+  if (logs.length < 3) return `<div style="color:var(--dim);font-size:13px;line-height:1.6">Log 3+ days to see your patterns.</div>`;
+  const scored = logs.filter(l => scoreDay(l) !== null);
+  if (!scored.length) return `<div style="color:var(--dim);font-size:13px">No scored days yet.</div>`;
+
+  const wakeTimes = scored.filter(l => l.wake).map(l => parseInt(l.wake.split(":")[0]));
+  let avgWake = "—";
+  if (wakeTimes.length > 0) avgWake = Math.round(wakeTimes.reduce((a,b) => a+b, 0) / wakeTimes.length) + ":00";
+
+  const withEx = scored.filter(l => l.mr_exercise).map(scoreDay);
+  const withoutEx = scored.filter(l => !l.mr_exercise).map(scoreDay);
+  let exInsight = "";
+  if (withEx.length && withoutEx.length) {
+    const diff = (withEx.reduce((a,b)=>a+b,0)/withEx.length) - (withoutEx.reduce((a,b)=>a+b,0)/withoutEx.length);
+    if (diff > 0) exInsight = `<div class="insight"><span class="k">Exercise → score boost</span><span class="v good">+${diff.toFixed(1)} pts</span></div>`;
+  }
+
+  const highScreen = scored.filter(l => l.screen_time === "extreme" || l.screen_time === "high").map(scoreDay);
+  const lowScreen = scored.filter(l => l.screen_time === "low" || l.screen_time === "med").map(scoreDay);
+  let screenInsight = "";
+  if (highScreen.length && lowScreen.length) {
+    const diff = (lowScreen.reduce((a,b)=>a+b,0)/lowScreen.length) - (highScreen.reduce((a,b)=>a+b,0)/highScreen.length);
+    if (diff > 0) screenInsight = `<div class="insight"><span class="k">Low screen → gain</span><span class="v good">+${diff.toFixed(1)} pts</span></div>`;
+  }
+
+  return `
+    <div class="insight"><span class="k">Avg wake time</span><span class="v">${avgWake}</span></div>
+    <div class="insight"><span class="k">Days logged</span><span class="v">${scored.length}</span></div>
+    ${exInsight}${screenInsight}
+    <div class="small">Tap Coach for deep analysis</div>
+  `;
+}
+
+function renderLog() {
+  const t = todayLog();
+  const moodPills = (selected, field) => MOODS.map(m => `<div class="mood ${selected === m.k ? 'active' : ''}" onclick="setMood('${field}','${m.k}')"><span class="ic">${m.em}</span>${m.label}</div>`).join("");
+  const energyDots = Array.from({length:5}, (_,i) => { const v = i+1; return `<div class="edot ${t.energy == v ? 'active' : ''}" onclick="setEnergy(${v})">${v}</div>`; }).join("");
+  const screenOpts = SCREEN_TIME.map(s => `<div class="st-opt ${t.screen_time === s.k ? 'active' : ''}" onclick="setScreen('${s.k}')"><div>${s.label}</div><div style="font-size:9px;opacity:0.7;margin-top:2px">${s.sub}</div></div>`).join("");
+  const morningChecks = MORNING_ROUTINE.map(r => `<div class="checkrow" onclick="toggleField('${r.k}')"><div class="lbl"><span class="em">${r.em}</span>${r.label}</div><div class="sw ${t[r.k] ? 'on' : ''}"></div></div>`).join("");
+  const eveningChecks = EVENING_ROUTINE.map(r => `<div class="checkrow" onclick="toggleField('${r.k}')"><div class="lbl"><span class="em">${r.em}</span>${r.label}</div><div class="sw ${t[r.k] ? 'on' : ''}"></div></div>`).join("");
+
+  return `
+    <div class="section">☀️ Morning</div>
     <div class="card">
-      <div class="card-title">Today</div>
-      <div class="status-row"><div><span class="check ${tl.m ? 'done' : ''}">${tl.m ? '✓' : ''}</span>Morning briefing</div>${!tl.m ? `<button class="btn-sm" onclick="go('morning')">Start →</button>` : ''}</div>
-      <div class="status-row"><div><span class="check ${tl.e ? 'done' : ''}">${tl.e ? '✓' : ''}</span>Evening check-in</div>${!tl.e ? `<button class="btn-sm" onclick="go('evening')">Start →</button>` : ''}</div>
+      <label style="margin-top:0">Wake time</label>
+      <input type="time" id="wakeIn" value="${t.wake || ''}" onchange="setField('wake',this.value)">
+      <label>Morning mood</label>
+      <div class="mood-row">${moodPills(t.mood_morning, 'mood_morning')}</div>
+      <label>Energy right now</label>
+      <div class="energy">${energyDots}</div>
     </div>
-    ${lastAI ? `<div class="ai-box"><div class="card-title">${tl.e?.response ? "Tonight's Debrief" : "Today's Game Plan"}</div><div class="ai-text">${escapeHtml(lastAI)}</div></div>` : `<div class="empty">Complete your morning briefing to get today's AI game plan</div>`}
+    <div class="card"><h3>Morning routine</h3>${morningChecks}</div>
+
+    <div class="section">🌙 Evening</div>
+    <div class="card">
+      <label style="margin-top:0">Sleep time last night</label>
+      <input type="time" id="sleepIn" value="${t.sleep || ''}" onchange="setField('sleep',this.value)">
+      <label>Pre-bed mood</label>
+      <div class="mood-row">${moodPills(t.mood_evening, 'mood_evening')}</div>
+    </div>
+    <div class="card"><h3>Evening routine</h3>${eveningChecks}</div>
+
+    <div class="section">📱 Screen time (honest)</div>
+    <div class="card"><div class="screen-time-grid">${screenOpts}</div></div>
+
+    <div class="section">📝 Notes</div>
+    <div class="card">
+      <textarea id="notesIn" rows="3" placeholder="Anything worth remembering about today?" onchange="setField('notes',this.value)">${t.notes || ''}</textarea>
+    </div>
+
+    <div class="section">⌚ Smartwatch sleep data (optional)</div>
+    <div class="card">
+      <label style="margin-top:0">Sleep duration (hours)</label>
+      <input type="number" step="0.1" min="0" max="24" value="${t.sleep_hours || ''}" placeholder="e.g. 7.5" onchange="setField('sleep_hours',this.value)">
+      <label>Sleep quality score (if tracked)</label>
+      <input type="number" step="1" min="0" max="100" value="${t.sleep_quality || ''}" placeholder="0-100" onchange="setField('sleep_quality',this.value)">
+      <div class="small">Coach uses this for correlations</div>
+    </div>
+
+    <button class="btn btn-2" onclick="go('home')">Done — Back to Week</button>
   `;
 }
 
-function renderMorning() {
-  if (ai) return header() + `<div class="section-title">Morning Briefing</div><div class="section-sub">Your game plan</div><div class="ai-box"><div class="card-title">Today's Plan</div><div class="ai-text">${escapeHtml(ai)}</div></div><button class="btn2" onclick="go('dashboard')">Back to Dashboard</button>`;
-  if (loading) return header() + `<div class="empty" style="padding:60px 20px">🧠 Building your game plan...</div>`;
-  return header() + `
-    <div class="section-title">Morning Briefing</div>
-    <div class="section-sub">Tell DayOS how you started</div>
-    <label>Wake Time</label>
-    <input type="time" id="wakeTime" value="${mForm.wake}" onchange="mForm.wake=this.value">
-    <label>Energy: <span id="eVal">${mForm.energy}</span>/5</label>
-    <input type="range" min="1" max="5" value="${mForm.energy}" oninput="mForm.energy=this.value;document.getElementById('eVal').textContent=this.value">
-    <label>Notes (optional)</label>
-    <textarea id="mNotes" rows="3" placeholder="Events today, how you feel..." onchange="mForm.notes=this.value">${mForm.notes}</textarea>
-    ${err ? `<div class="err">${err}</div>` : ''}
-    <button class="btn" onclick="submitMorning()">Get Game Plan →</button>
-  `;
-}
-
-async function submitMorning() {
-  mForm.wake = document.getElementById('wakeTime').value;
-  mForm.notes = document.getElementById('mNotes').value;
-  if (!mForm.wake) { err = 'Please enter wake time'; render(); return; }
-  loading = true; err = ''; render();
-  try {
-    const p = `You are DayOS, a direct coach for PB. ${IDEAL}\n\nToday PB woke at ${mForm.wake}, energy ${mForm.energy}/5. Notes: "${mForm.notes || 'none'}"\n\nGive a sharp morning briefing:\n1. One sentence assessment\n2. Today's 3 priorities\n3. One thing to watch for\n4. One direct closer\n\nUnder 180 words. Direct, no fluff.`;
-    const r = await askAI(p);
-    updateToday({ m: { ...mForm, response: r } });
-    ai = r;
-  } catch(e) { err = e.message; }
-  loading = false; render();
-}
-
-function renderEvening() {
-  if (ai) return header() + `<div class="section-title">Evening Debrief</div><div class="section-sub">Day closed</div><div class="ai-box"><div class="card-title">Tonight's Debrief</div><div class="ai-text">${escapeHtml(ai)}</div></div><button class="btn2" onclick="go('dashboard')">Back to Dashboard</button>`;
-  if (loading) return header() + `<div class="empty" style="padding:60px 20px">🧠 Analyzing your day...</div>`;
-  const tog = (k, l) => `<div class="toggle-row"><span>${l}</span><div class="toggle ${eForm[k] ? 'on' : ''}" onclick="eForm.${k}=!eForm.${k};render()"></div></div>`;
-  return header() + `
-    <div class="section-title">Evening Check-In</div>
-    <div class="section-sub">2 minutes. Close the day right.</div>
-    <label>Sleep Time Last Night</label>
-    <input type="time" id="sleepTime" value="${eForm.sleep}" onchange="eForm.sleep=this.value">
-    <div class="card" style="margin-top:16px"><div class="card-title">Today</div>${tog('ex','Exercised')}${tog('dw','Deep work')}${tog('mr','Morning routine')}${tog('nr','Night routine')}</div>
-    <label>Wins</label>
-    <textarea id="eWins" rows="2" placeholder="What went well?" onchange="eForm.wins=this.value">${eForm.wins}</textarea>
-    <label>Where You Slipped</label>
-    <textarea id="eLosses" rows="2" placeholder="What drained you?" onchange="eForm.losses=this.value">${eForm.losses}</textarea>
-    ${err ? `<div class="err">${err}</div>` : ''}
-    <button class="btn" onclick="submitEvening()">Close the Day →</button>
-  `;
-}
-
-async function submitEvening() {
-  eForm.sleep = document.getElementById('sleepTime').value;
-  eForm.wins = document.getElementById('eWins').value;
-  eForm.losses = document.getElementById('eLosses').value;
-  loading = true; err = ''; render();
-  const tl = todayLog();
-  try {
-    const p = `You are DayOS, a direct coach for PB. ${IDEAL}\n\nTonight:\n- Slept at: ${eForm.sleep}\n- Exercised: ${eForm.ex}\n- Deep work: ${eForm.dw}\n- Morning routine: ${eForm.mr}\n- Night routine: ${eForm.nr}\n- Wins: "${eForm.wins}"\n- Losses: "${eForm.losses}"\n${tl.m ? `- Morning energy: ${tl.m.energy}/5, woke ${tl.m.wake}` : ''}\n\nGive end-of-day debrief:\n1. Score 1-10 with one sentence\n2. What made or broke today\n3. Action for tomorrow morning\n4. One closing line\n\nUnder 150 words. Direct.`;
-    const r = await askAI(p);
-    updateToday({ e: { ...eForm, response: r }, ex: eForm.ex, dw: eForm.dw, mr: eForm.mr, nr: eForm.nr });
-    ai = r;
-  } catch(e) { err = e.message; }
-  loading = false; render();
-}
+function setField(k, v) { const p={}; p[k]=v; updateLog(p); toast("Saved"); }
+function setMood(field, val) { const p={}; p[field]=val; updateLog(p); render(); toast("Saved"); }
+function setEnergy(v) { updateLog({energy: v}); render(); }
+function setScreen(v) { updateLog({screen_time: v}); render(); toast("Logged"); }
+function toggleField(k) { const t = todayLog(); const p={}; p[k]=!t[k]; updateLog(p); render(); }
 
 function renderCoach() {
-  if (ai) return header() + `<div class="section-title">Trajectory</div><div class="ai-box"><div class="card-title">Analysis</div><div class="ai-text">${escapeHtml(ai)}</div></div><button class="btn2" onclick="ai='';render()">Analyze Again</button>`;
-  if (loading) return header() + `<div class="empty" style="padding:60px 20px">🧠 Reading your patterns...</div>`;
-  if (logs.length < 3) return header() + `<div class="section-title">Life Coach</div><div class="section-sub">AI reads your patterns honestly</div><div class="empty">📊<br><br>Log at least 3 days first.<br><br>${logs.length}/3 days</div>`;
-  return header() + `
-    <div class="section-title">Life Coach</div>
-    <div class="section-sub">AI reads your patterns and tells you the truth</div>
-    <div class="card"><div class="card-title">Data</div>${logs.length} days logged · Last ${Math.min(logs.length,14)} analyzed</div>
-    ${err ? `<div class="err">${err}</div>` : ''}
-    <button class="btn" onclick="submitCoach()">Analyze My Trajectory →</button>
+  const scored = logs.filter(l => scoreDay(l) !== null);
+  if (scored.length < 3) {
+    return `<div class="section">🎯 Life Coach</div>
+      <div class="empty"><div class="big">📊</div><strong>Log 3+ days first.</strong><br>Then AI can analyze your real patterns.<br><br><span style="color:var(--accent)">${scored.length} / 3 days</span></div>`;
+  }
+  if (!key) {
+    return `<div class="section">🎯 Life Coach</div>
+      <div class="empty"><div class="big">🔑</div>Add your free API key to unlock the coach.<br><br><button class="btn" onclick="go('settings')">Go to Settings</button></div>`;
+  }
+  return `
+    <div class="section">🎯 Life Coach</div>
+    <div class="card">
+      <h3>Data available</h3>
+      <div class="insight"><span class="k">Days logged</span><span class="v">${scored.length}</span></div>
+      <div class="insight"><span class="k">7-day avg</span><span class="v">${getAvgScore(7) || "—"}/10</span></div>
+      <div class="insight"><span class="k">30-day avg</span><span class="v">${getAvgScore(30) || "—"}/10</span></div>
+    </div>
+    <div class="section">Ask the coach</div>
+    <button class="btn" onclick="runCoach('trajectory')">📈 Weekly Trajectory Analysis</button>
+    <button class="btn" onclick="runCoach('sleep')">😴 Sleep ↔ Habits Correlation</button>
+    <button class="btn btn-2" onclick="runCoach('custom')">💬 Ask Something Specific</button>
   `;
 }
 
-async function submitCoach() {
-  loading = true; err = ''; render();
+async function runCoach(type) {
+  const scored = logs.filter(l => scoreDay(l) !== null);
+  const recent = scored.slice(-14);
+  const summary = recent.map(l => ({
+    date: l.date, score: scoreDay(l),
+    wake: l.wake, sleep: l.sleep,
+    sleep_hours: l.sleep_hours, sleep_quality: l.sleep_quality,
+    mood_am: l.mood_morning, mood_pm: l.mood_evening,
+    energy: l.energy, screen: l.screen_time,
+    exercise: !!l.mr_exercise, protein: !!l.mr_protein, reading: !!l.mr_read,
+    journal: !!l.er_journal, shower: !!l.er_shower, groom: !!l.er_groom, no_screen_pre_bed: !!l.er_noscreen,
+    notes: l.notes
+  }));
+
+  let prompt;
+  if (type === "trajectory") {
+    prompt = `${CTX}
+
+Last ${recent.length} days of PB's data:
+${JSON.stringify(summary, null, 2)}
+
+Give PB a brutally honest weekly trajectory analysis:
+1. Patterns forming (good AND bad) — specific to data
+2. #1 habit dragging PB down
+3. #1 habit that's working — reinforce it
+4. 6-month forecast at this pace
+5. The ONE change this week
+
+Direct, operator voice. No fluff. Under 280 words.`;
+  } else if (type === "sleep") {
+    prompt = `${CTX}
+
+PB wants sleep ↔ habit correlations. Data:
+${JSON.stringify(summary, null, 2)}
+
+Analyze what daily habits affect sleep_hours, sleep_quality, and sleep time:
+1. What's helping PB's sleep — point to specific data
+2. What's hurting sleep
+3. Sleep → next-day energy/mood connection
+4. 3 specific sleep protocols to test this week
+
+Focus on actionable correlations. If data is too thin, say so. Under 300 words.`;
+  } else {
+    const userQ = window.prompt("What do you want to ask the coach?");
+    if (!userQ) return;
+    prompt = `${CTX}
+
+PB's data:
+${JSON.stringify(summary, null, 2)}
+
+PB asks: "${userQ}"
+
+Answer with their data. Direct, operator tone. Under 250 words.`;
+  }
+
+  loading = true; render();
   try {
-    const recent = logs.slice(-14).map(l => ({ date: l.date, woke: l.m?.wake, energy: l.m?.energy, ex: l.ex, dw: l.dw, wins: l.e?.wins, losses: l.e?.losses, score: score(l) }));
-    const p = `You are DayOS, honest coach for PB. ${IDEAL}\n\nLast ${recent.length} days:\n${JSON.stringify(recent)}\n\nGive brutally honest trajectory analysis:\n1. Patterns forming (good AND bad)\n2. #1 habit dragging PB down\n3. #1 habit working — reinforce it\n4. At this trajectory, where in 6 months?\n5. Most important change this week\n\nUnder 300 words. Direct, no fluff.`;
-    ai = await askAI(p);
-  } catch(e) { err = e.message; }
+    const r = await askAI(prompt);
+    ai = { title: type === "trajectory" ? "Weekly Trajectory" : type === "sleep" ? "Sleep Correlation" : "Coach Response", text: r };
+  } catch(e) {
+    ai = { title: "Error", text: e.message + "\n\nTry again, or check your API key in Settings." };
+  }
   loading = false; render();
 }
 
-function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderSettings() {
+  const scored = logs.filter(l => scoreDay(l) !== null);
+  return `
+    <div class="section">🔑 API Key</div>
+    <div class="card">
+      <p style="font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:12px">
+        DayOS uses free AI models from OpenRouter. Get a free key at <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--accent)">openrouter.ai/keys</a> — no credit card, no age limit.
+      </p>
+      <label style="margin-top:0">OpenRouter API Key</label>
+      <input type="password" id="keyIn" value="${key}" placeholder="sk-or-v1-...">
+      <div class="btn-row"><button class="btn" onclick="saveKey()">${key ? "Update" : "Save"} Key</button></div>
+      ${key ? `<div class="small" style="color:var(--green);margin-top:10px">✓ Key saved on this device</div>` : ""}
+    </div>
+    <div class="section">📦 Your Data</div>
+    <div class="card">
+      <div class="insight"><span class="k">Days logged</span><span class="v">${scored.length}</span></div>
+      <div class="insight"><span class="k">Total entries</span><span class="v">${logs.length}</span></div>
+      <div class="insight"><span class="k">Storage</span><span class="v">This device</span></div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-2" onclick="exportData()">Export JSON</button>
+        <button class="btn btn-danger" onclick="clearData()">Clear All</button>
+      </div>
+    </div>
+    <div class="section">ℹ️ About</div>
+    <div class="card">
+      <p style="font-size:12px;color:var(--dim);line-height:1.7">
+        DayOS v2 — built for PB.<br>
+        Your data stays on this device. Only sent out when you run a Coach analysis.
+      </p>
+    </div>
+  `;
+}
 
-if (!key) document.getElementById('keyModal').style.display = 'flex';
+function saveKey() {
+  const v = document.getElementById("keyIn").value.trim();
+  if (!v) { toast("Paste your key first"); return; }
+  key = v;
+  localStorage.setItem("dayos_key", v);
+  toast("API key saved");
+  render();
+}
+
+function exportData() {
+  const data = JSON.stringify(logs, null, 2);
+  const blob = new Blob([data], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "dayos-export-" + TODAY + ".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast("Exported");
+}
+
+function clearData() {
+  if (!confirm("Delete all logs? Cannot be undone.")) return;
+  logs = []; saveLogs(); toast("Cleared"); render();
+}
+
+load();
 render();
 </script>
 </body>
