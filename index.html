@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DayOS">
+<meta name="theme-color" content="#0a0a0f">
+<title>DayOS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #7c6af7;
+    --accent-dim: #3d3578;
+    --text: #e8e4d9;
+    --text-dim: #666;
+    --text-muted: #333;
+    --green: #4ade80;
+    --yellow: #facc15;
+    --red: #f87171;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overscroll-behavior: none;
+    overflow: hidden;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: -webkit-fill-available;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* HEADER */
+  .header {
+    padding: calc(var(--safe-top) + 16px) 24px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .header-left .date-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .header-left .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+
+  .logo span { color: var(--accent); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .streak-badge {
+    background: #1a1a2e;
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--accent);
+    display: none;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: background 0.3s;
+  }
+
+  /* CONTENT */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 24px;
+    padding-bottom: calc(80px + var(--safe-bottom));
+  }
+
+  /* BOTTOM NAV */
+  .nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: #0d0d15;
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0;
+    padding-bottom: calc(8px + var(--safe-bottom));
+    z-index: 100;
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 6px 0;
+    background: none;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+  }
+
+  .nav-icon { font-size: 20px; }
+
+  .nav-label {
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  .nav-item.active .nav-label { color: var(--accent); }
+
+  .nav-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .nav-item.active .nav-dot { opacity: 1; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .section-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stat-unit { font-size: 10px; color: var(--text-dim); }
+
+  .stat-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  /* BAR CHART */
+  .bar-chart {
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+    height: 60px;
+  }
+
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    width: 100%;
+    border-radius: 4px;
+    min-height: 4px;
+    transition: height 0.5s ease;
+  }
+
+  .bar-label {
+    font-size: 8px;
+    color: #444;
+    letter-spacing: 1px;
+  }
+
+  /* TODAY STATUS */
+  .status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #1a1a2e;
+  }
+
+  .status-row:last-child { border-bottom: none; }
+
+  .status-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .check-circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--bg);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .check-circle.done {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .status-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    transition: color 0.3s;
+  }
+
+  .status-text.done { color: var(--text); }
+
+  .start-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+
+  /* FORM ELEMENTS */
+  .form-group { margin-bottom: 18px; }
+
+  .form-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  input[type="time"], textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 14px;
+    color: var(--text);
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input[type="time"]:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  textarea {
+    font-size: 13px;
+    resize: none;
+    line-height: 1.6;
+  }
+
+  textarea::placeholder { color: var(--text-muted); }
+
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+    margin: 4px 0;
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #444;
+    margin-top: 4px;
+  }
+
+  /* TOGGLE */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid #1a1a2e;
+  }
+
+  .toggle-row:last-child { border-bottom: none; }
+
+  .toggle-label { font-size: 13px; color: #bbb; }
+
+  .toggle {
+    width: 46px;
+    height: 26px;
+    border-radius: 13px;
+    background: var(--text-muted);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle.on { background: var(--accent); }
+
+  .toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+
+  .toggle.on .toggle-knob { left: 23px; }
+
+  /* PRIMARY BUTTON */
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    border: none;
+    border-radius: 13px;
+    padding: 17px;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 4px;
+  }
+
+  .btn-primary:disabled {
+    background: var(--border);
+    color: var(--text-dim);
+    cursor: not-allowed;
+  }
+
+  .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+
+  .btn-secondary {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 15px;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+
+  /* AI RESPONSE */
+  .ai-card {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .ai-title {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .ai-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.85;
+    white-space: pre-wrap;
+  }
+
+  /* LOADING */
+  .loading-state {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .loading-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .loading-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  .loading-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    padding: 32px 20px;
+    text-align: center;
+  }
+
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+
+  .empty-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .empty-count {
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  /* SCREEN ANIMATIONS */
+  .screen { animation: fadeIn 0.25s ease; }
+
+  /* COACH DATA SUMMARY */
+  .data-pill {
+    display: inline-block;
+    background: #1a1a2e;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-right: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* API KEY MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: var(--safe-bottom);
+  }
+
+  .modal {
+    background: #13131f;
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    padding: 28px 24px 32px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.3s ease;
+  }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .modal-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .modal-sub a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .modal-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 14px;
+  }
+
+  .modal-input:focus { border-color: var(--accent); }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  /* SCROLLBAR */
+  .content::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="date-label" id="dateLabel"></div>
+      <div class="logo">Day<span>OS</span></div>
+    </div>
+    <div class="header-right">
+      <div class="streak-badge" id="streakBadge">🔥 0 days</div>
+      <div class="status-dot" id="statusDot"></div>
+    </div>
+  </div>
+
+  <div class="content" id="content"></div>
+
+  <nav class="nav">
+    <button class="nav-item" onclick="navigate('morning')" id="nav-morning">
+      <span class="nav-icon">☀️</span>
+      <span class="nav-label">Morning</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" onclick="navigate('evening')" id="nav-evening">
+      <span class="nav-icon">🌙</span>
+      <span class="nav-label">Evening</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item active" onclick="navigate('dashboard')" id="nav-dashboard">
+      <span class="nav-icon">⚡</span>
+      <span class="nav-label">Today</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" onclick="navigate('coach')" id="nav-coach">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Coach</span>
+      <div class="nav-dot"></div>
+    </button>
+  </nav>
+</div>
+
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="apiModal" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Connect DayOS AI</div>
+    <div class="modal-sub">
+      Enter your Anthropic API key to enable AI coaching. Get one free at
+      <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+      — new accounts get free credits.<br><br>
+      Your key is stored only on this device, never sent anywhere except Anthropic.
+    </div>
+    <input class="modal-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+    <button class="btn-primary" onclick="saveApiKey()">Save & Continue →</button>
+    <button class="btn-secondary" onclick="closeModal()">Skip for now</button>
+  </div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let currentScreen = 'dashboard';
+let logs = [];
+let apiKey = '';
+let aiResult = '';
+let isLoading = false;
+
+const TODAY = new Date().toISOString().split('T')[0];
+
+const IDEAL_DAY = `PB's ideal day: Wake 5-6AM, exercise + protein + coffee, morning reading/journaling, 2hr deep work/building block, 20min nap, free time/social, night routine (journal, grooming, warm shower), sleep 10PM. PB is 15, student, founder of FlowForge automation, trains badminton + weights. Core desire: freedom, direction, discipline. Main struggle: drift, scrolling, late nights from social events.`;
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  document.getElementById('dateLabel').textContent =
+    new Date().toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' });
+  updateHeader();
+  render();
+  if (!apiKey) setTimeout(() => document.getElementById('apiModal').style.display = 'flex', 800);
+});
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+function loadData() {
+  try { logs = JSON.parse(localStorage.getItem('dayos_logs') || '[]'); } catch { logs = []; }
+  apiKey = localStorage.getItem('dayos_key') || '';
+}
+
+function saveLogs() {
+  localStorage.setItem('dayos_logs', JSON.stringify(logs));
+}
+
+function saveApiKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val) return;
+  apiKey = val;
+  localStorage.setItem('dayos_key', val);
+  closeModal();
+}
+
+function closeModal() {
+  document.getElementById('apiModal').style.display = 'none';
+}
+
+// ─── LOG HELPERS ──────────────────────────────────────────────────────────────
+function getTodayLog() { return logs.find(l => l.date === TODAY) || {}; }
+
+function updateLog(data) {
+  const idx = logs.findIndex(l => l.date === TODAY);
+  if (idx >= 0) { logs[idx] = { ...logs[idx], ...data }; }
+  else { logs.push({ date: TODAY, ...data }); }
+  saveLogs();
+}
+
+function getDayScore(log) {
+  if (!log || (!log.morningBriefing && !log.eveningCheckin)) return null;
+  let s = 0;
+  const wh = parseInt((log.morningBriefing?.wakeTime || '10:00').split(':')[0]);
+  const sh = parseInt((log.eveningCheckin?.sleepTime || '23:00').split(':')[0]);
+  if (wh <= 6) s += 2; else if (wh <= 8) s += 1;
+  if (sh <= 22) s += 2; else if (sh <= 23) s += 1;
+  if (log.exercised) s += 2;
+  if (log.deepWork) s += 2;
+  if (log.morningRoutine) s += 1;
+  if (log.nightRoutine) s += 1;
+  return Math.min(10, s);
+}
+
+function scoreColor(s) {
+  if (s === null) return '#1e1e2e';
+  if (s >= 7) return '#4ade80';
+  if (s >= 4) return '#facc15';
+  return '#f87171';
+}
+
+function getStreak() {
+  const sorted = [...logs].sort((a,b) => new Date(b.date)-new Date(a.date));
+  let streak = 0;
+  for (const l of sorted) { if (getDayScore(l) >= 5) streak++; else break; }
+  return streak;
+}
+
+function getAvg() {
+  const scored = logs.filter(l => getDayScore(l) !== null);
+  if (!scored.length) return null;
+  return (scored.reduce((s,l) => s + getDayScore(l), 0) / scored.length).toFixed(1);
+}
+
+// ─── HEADER ───────────────────────────────────────────────────────────────────
+function updateHeader() {
+  const streak = getStreak();
+  const badge = document.getElementById('streakBadge');
+  if (streak > 0) { badge.style.display = 'block'; badge.textContent = `🔥 ${streak} day${streak !== 1 ? 's' : ''}`; }
+  else { badge.style.display = 'none'; }
+
+  const dot = document.getElementById('statusDot');
+  const tl = getTodayLog();
+  if (tl.morningBriefing && tl.eveningCheckin) dot.style.background = '#4ade80';
+  else if (tl.morningBriefing) dot.style.background = '#facc15';
+  else dot.style.background = '#333';
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function navigate(screen) {
+  currentScreen = screen;
+  aiResult = '';
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + screen).classList.add('active');
+  render();
+}
+
+// ─── API CALL ─────────────────────────────────────────────────────────────────
+async function callClaude(prompt) {
+  if (!apiKey) {
+    document.getElementById('apiModal').style.display = 'flex';
+    throw new Error('No API key');
+  }
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || 'API error ' + res.status);
+  }
+  const data = await res.json();
+  return data.content?.[0]?.text || '';
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  const c = document.getElementById('content');
+  updateHeader();
+  if (currentScreen === 'dashboard') c.innerHTML = renderDashboard();
+  else if (currentScreen === 'morning') c.innerHTML = renderMorning();
+  else if (currentScreen === 'evening') c.innerHTML = renderEvening();
+  else if (currentScreen === 'coach') c.innerHTML = renderCoach();
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const streak = getStreak();
+  const avg = getAvg();
+  const tl = getTodayLog();
+
+  const last7 = Array.from({length:7}, (_,i) => {
+    const d = new Date(); d.setDate(d.getDate() - (6-i));
+    const ds = d.toISOString().split('T')[0];
+    const log = logs.find(l => l.date === ds);
+    const score = getDayScore(log);
+    const label = d.toLocaleDateString('en',{weekday:'short'}).substring(0,2).toUpperCase();
+    return { label, score, ds };
+  });
+
+  const bars = last7.map(({label, score}) => {
+    const h = score !== null ? Math.max(4, (score/10)*52) : 4;
+    return `<div class="bar-col">
+      <div class="bar" style="height:${h}px;background:${scoreColor(score)}"></div>
+      <div class="bar-label">${label}</div>
+    </div>`;
+  }).join('');
+
+  const lastAI = tl.eveningCheckin?.response || tl.morningBriefing?.response;
+  const aiBlock = lastAI
+    ? `<div class="ai-card">
+        <div class="ai-title">${tl.eveningCheckin?.response ? "Tonight's Debrief" : "Today's Game Plan"}</div>
+        <div class="ai-text">${lastAI}</div>
+       </div>`
+    : `<div class="empty-state">
+        <div class="empty-icon">☀️</div>
+        <div class="empty-text">Start your morning briefing to get today's AI game plan</div>
+       </div>`;
+
+  return `<div class="screen">
+    <div class="section-title" style="margin-bottom:20px">Overview</div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">${streak > 0 ? streak : '—'}<span class="stat-unit">${streak > 0 ? 'd' : ''}</span></div>
+        <div class="stat-label">Streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${avg ?? '—'}<span class="stat-unit">${avg ? '/10' : ''}</span></div>
+        <div class="stat-label">Avg</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${logs.length}<span class="stat-unit">d</span></div>
+        <div class="stat-label">Logged</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Last 7 Days</div>
+      <div class="bar-chart">${bars}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Today's Status</div>
+      <div class="status-row">
+        <div class="status-left">
+          <div class="check-circle ${tl.morningBriefing ? 'done' : ''}">${tl.morningBriefing ? '✓' : ''}</div>
+          <span class="status-text ${tl.morningBriefing ? 'done' : ''}">Morning briefing</span>
+        </div>
+        ${!tl.morningBriefing ? `<button class="start-btn" onclick="navigate('morning')">Start →</button>` : ''}
+      </div>
+      <div class="status-row">
+        <div class="status-left">
+          <div class="check-circle ${tl.eveningCheckin ? 'done' : ''}">${tl.eveningCheckin ? '✓' : ''}</div>
+          <span class="status-text ${tl.eveningCheckin ? 'done' : ''}">Evening check-in</span>
+        </div>
+        ${!tl.eveningCheckin ? `<button class="start-btn" onclick="navigate('evening')">Start →</button>` : ''}
+      </div>
+    </div>
+
+    ${aiBlock}
+  </div>`;
+}
+
+// ─── MORNING ─────────────────────────────────────────────────────────────────
+let mForm = { wakeTime: '', energy: 3, notes: '' };
+
+function renderMorning() {
+  const tl = getTodayLog();
+  if (aiResult) return renderAIResult("Today's Game Plan", aiResult, "Back to Dashboard", () => { aiResult=''; navigate('dashboard'); });
+  if (isLoading) return renderLoading("Building your game plan...");
+
+  return `<div class="screen">
+    <div class="section-title">Morning Briefing</div>
+    <div class="section-sub">Tell DayOS how you started. Get your game plan.</div>
+
+    <div class="form-group">
+      <label class="form-label">Wake Time</label>
+      <input type="time" id="wakeTime" value="${mForm.wakeTime}" onchange="mForm.wakeTime=this.value">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Energy Level: <span id="energyVal">${mForm.energy}</span>/5</label>
+      <input type="range" min="1" max="5" value="${mForm.energy}"
+        oninput="mForm.energy=this.value;document.getElementById('energyVal').textContent=this.value">
+      <div class="range-labels"><span>Barely alive</span><span>Ready to build</span></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Anything on your mind? (optional)</label>
+      <textarea id="morningNotes" rows="3" placeholder="Events today, how you feel, what you want to get done..."
+        onchange="mForm.notes=this.value">${mForm.notes}</textarea>
+    </div>
+
+    <button class="btn-primary" onclick="submitMorning()" ${!mForm.wakeTime ? 'disabled' : ''}>
+      Get Today's Game Plan →
+    </button>
+  </div>`;
+}
+
+async function submitMorning() {
+  mForm.wakeTime = document.getElementById('wakeTime').value;
+  mForm.notes = document.getElementById('morningNotes').value;
+  if (!mForm.wakeTime) return;
+  isLoading = true; render();
+  try {
+    const prompt = `You are DayOS, a direct life coach for PB.
+${IDEAL_DAY}
+
+Today PB woke at ${mForm.wakeTime}, energy ${mForm.energy}/5.
+Notes: "${mForm.notes || 'none'}"
+
+Give PB a sharp morning briefing:
+1. One sentence: honest assessment of this start
+2. Today's 3 priorities — specific, actionable
+3. One thing to watch out for today
+4. One direct closer — no fluff
+
+Under 180 words. Talk directly to PB.`;
+    const response = await callClaude(prompt);
+    updateLog({ morningBriefing: { ...mForm, response, time: new Date().toISOString() } });
+    aiResult = response;
+  } catch(e) {
+    aiResult = e.message === 'No API key' ? '' : `Error: ${e.message}. Check your API key in settings.`;
+  }
+  isLoading = false; render();
+}
+
+// ─── EVENING ─────────────────────────────────────────────────────────────────
+let eForm = { sleepTime: '', exercised: false, deepWork: false, morningRoutine: false, nightRoutine: false, wins: '', losses: '' };
+
+function renderEvening() {
+  if (aiResult) return renderAIResult("Tonight's Debrief", aiResult, "Back to Dashboard", () => { aiResult=''; navigate('dashboard'); });
+  if (isLoading) return renderLoading("Analyzing your day...");
+
+  const toggleRow = (key, label) => `
+    <div class="toggle-row">
+      <span class="toggle-label">${label}</span>
+      <div class="toggle ${eForm[key] ? 'on' : ''}" onclick="eForm.${key}=!eForm.${key};render()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>`;
+
+  return `<div class="screen">
+    <div class="section-title">Evening Check-In</div>
+    <div class="section-sub">2 minutes. Close the day right.</div>
+
+    <div class="form-group">
+      <label class="form-label">Sleep Time Last Night</label>
+      <input type="time" id="sleepTime" value="${eForm.sleepTime}" onchange="eForm.sleepTime=this.value">
+    </div>
+
+    <div class="card" style="padding:16px;margin-bottom:18px">
+      <div class="card-title">What happened today?</div>
+      ${toggleRow('exercised', 'Exercised')}
+      ${toggleRow('deepWork', 'Did deep work / built something')}
+      ${toggleRow('morningRoutine', 'Did morning routine')}
+      ${toggleRow('nightRoutine', 'Doing night routine tonight')}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Today's Wins</label>
+      <textarea id="eWins" rows="2" placeholder="What actually went well?"
+        onchange="eForm.wins=this.value">${eForm.wins}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Where You Slipped</label>
+      <textarea id="eLosses" rows="2" placeholder="What drained your time or energy?"
+        onchange="eForm.losses=this.value">${eForm.losses}</textarea>
+    </div>
+
+    <button class="btn-primary" onclick="submitEvening()">Close the Day →</button>
+  </div>`;
+}
+
+async function submitEvening() {
+  eForm.sleepTime = document.getElementById('sleepTime')?.value || eForm.sleepTime;
+  eForm.wins = document.getElementById('eWins')?.value || eForm.wins;
+  eForm.losses = document.getElementById('eLosses')?.value || eForm.losses;
+  isLoading = true; render();
+  const tl = getTodayLog();
+  try {
+    const prompt = `You are DayOS, a direct life coach for PB, 15 years old.
+${IDEAL_DAY}
+
+Tonight's check-in:
+- Slept last night at: ${eForm.sleepTime || 'unknown'}
+- Exercised: ${eForm.exercised ? 'Yes' : 'No'}
+- Deep work: ${eForm.deepWork ? 'Yes' : 'No'}
+- Morning routine: ${eForm.morningRoutine ? 'Yes' : 'No'}
+- Night routine: ${eForm.nightRoutine ? 'Yes' : 'No'}
+- Wins: "${eForm.wins || 'none'}"
+- Losses: "${eForm.losses || 'none'}"
+${tl.morningBriefing ? `- This morning energy was ${tl.morningBriefing.energy}/5, woke at ${tl.morningBriefing.wakeTime}` : ''}
+
+Give PB a direct end-of-day debrief:
+1. Score today 1-10 with one honest sentence
+2. The one thing that made or broke today
+3. One specific action for tomorrow morning
+4. One closing line — real, not soft
+
+Under 150 words. Talk directly to PB.`;
+    const response = await callClaude(prompt);
+    updateLog({ eveningCheckin: { ...eForm, response, time: new Date().toISOString() }, ...eForm });
+    aiResult = response;
+  } catch(e) {
+    aiResult = e.message === 'No API key' ? '' : `Error: ${e.message}`;
+  }
+  isLoading = false; render();
+}
+
+// ─── COACH ───────────────────────────────────────────────────────────────────
+function renderCoach() {
+  if (aiResult) return renderAIResult("Trajectory Analysis", aiResult, "Analyze Again", () => { aiResult=''; render(); });
+  if (isLoading) return renderLoading("Reading your patterns...");
+
+  if (logs.length < 3) {
+    return `<div class="screen">
+      <div class="section-title">Life Coach</div>
+      <div class="section-sub">AI reads your real patterns and tells you the truth about where you're heading.</div>
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <div class="empty-text">Complete at least 3 days of check-ins first. Then the coach can actually analyze your patterns — not guess.</div>
+        <div class="empty-count">${logs.length}/3 days logged</div>
+      </div>
+    </div>`;
+  }
+
+  return `<div class="screen">
+    <div class="section-title">Life Coach</div>
+    <div class="section-sub">AI reads your real patterns and tells you the truth about where you're heading.</div>
+
+    <div class="card">
+      <div class="card-title">Data available</div>
+      <div>
+        <span class="data-pill">${logs.length} days logged</span>
+        <span class="data-pill">Last ${Math.min(logs.length,14)} analyzed</span>
+        ${getStreak() > 0 ? `<span class="data-pill">🔥 ${getStreak()} streak</span>` : ''}
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="submitCoach()">Analyze My Trajectory →</button>
+  </div>`;
+}
+
+async function submitCoach() {
+  isLoading = true; render();
+  const recent = logs.slice(-14);
+  try {
+    const summary = recent.map(l => ({
+      date: l.date,
+      woke: l.morningBriefing?.wakeTime,
+      energy: l.morningBriefing?.energy,
+      exercised: l.exercised,
+      deepWork: l.deepWork,
+      wins: l.eveningCheckin?.wins,
+      losses: l.eveningCheckin?.losses,
+      score: getDayScore(l)
+    }));
+    const prompt = `You are DayOS, an honest life coach for PB, 15 years old, founder of FlowForge automation, badminton + weight training, wants freedom and direction in life.
+${IDEAL_DAY}
+
+Last ${recent.length} days of logged data:
+${JSON.stringify(summary, null, 2)}
+
+Give PB a brutally honest trajectory analysis:
+1. What patterns are forming (good AND bad)
+2. The #1 habit dragging PB down right now
+3. The #1 habit that's working — reinforce it
+4. At this trajectory, where is PB in 6 months? Be real.
+5. The single most important change to make this week
+
+Direct, no fluff. Talk like a mentor who actually cares. Under 300 words.`;
+    aiResult = await callClaude(prompt);
+  } catch(e) {
+    aiResult = e.message === 'No API key' ? '' : `Error: ${e.message}`;
+  }
+  isLoading = false; render();
+}
+
+// ─── SHARED COMPONENTS ────────────────────────────────────────────────────────
+function renderLoading(msg) {
+  return `<div class="screen loading-state">
+    <div class="loading-dots">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+    <div class="loading-text">${msg}</div>
+  </div>`;
+}
+
+function renderAIResult(title, text, backLabel, backFn) {
+  window._aiBack = backFn;
+  return `<div class="screen">
+    <div class="ai-card">
+      <div class="ai-title">${title}</div>
+      <div class="ai-text">${text}</div>
+    </div>
+    <button class="btn-secondary" onclick="window._aiBack()">${backLabel}</button>
+  </div>`;
+}
+</script>
+</body>
+</html>
