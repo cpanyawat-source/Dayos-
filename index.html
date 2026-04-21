@@ -660,12 +660,12 @@
   <div class="modal">
     <div class="modal-title">Connect DayOS AI</div>
     <div class="modal-sub">
-      Enter your Anthropic API key to enable AI coaching. Get one free at
-      <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
-      — new accounts get free credits.<br><br>
-      Your key is stored only on this device, never sent anywhere except Anthropic.
+      Enter your free OpenRouter API key to enable AI coaching. Get one free at
+      <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>
+      — 100% free, no credit card, no age restriction.<br><br>
+      Your key is stored only on this device, never sent anywhere except OpenRouter.
     </div>
-    <input class="modal-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+    <input class="modal-input" type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
     <button class="btn-primary" onclick="saveApiKey()">Save & Continue →</button>
     <button class="btn-secondary" onclick="closeModal()">Skip for now</button>
   </div>
@@ -782,22 +782,22 @@ function navigate(screen) {
   render();
 }
 
-// ─── API CALL ─────────────────────────────────────────────────────────────────
+// ─── API CALL (OpenRouter - free model) ───────────────────────────────────────
 async function callClaude(prompt) {
   if (!apiKey) {
     document.getElementById('apiModal').style.display = 'flex';
     throw new Error('No API key');
   }
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'Authorization': 'Bearer ' + apiKey,
+      'HTTP-Referer': window.location.origin,
+      'X-Title': 'DayOS'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: 'deepseek/deepseek-chat-v3.1:free',
       max_tokens: 1000,
       messages: [{ role: 'user', content: prompt }]
     })
@@ -807,7 +807,7 @@ async function callClaude(prompt) {
     throw new Error(err?.error?.message || 'API error ' + res.status);
   }
   const data = await res.json();
-  return data.content?.[0]?.text || '';
+  return data.choices?.[0]?.message?.content || '';
 }
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
