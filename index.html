@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -9,1146 +8,308 @@
 <meta name="apple-mobile-web-app-title" content="DayOS">
 <meta name="theme-color" content="#0a0a0f">
 <title>DayOS</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --border: #1e1e2e;
-    --accent: #7c6af7;
-    --accent-dim: #3d3578;
-    --text: #e8e4d9;
-    --text-dim: #666;
-    --text-muted: #333;
-    --green: #4ade80;
-    --yellow: #facc15;
-    --red: #f87171;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-  }
-
-- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-body {
-background: var(–bg);
-color: var(–text);
-font-family: ‘DM Mono’, monospace;
-min-height: 100vh;
-min-height: -webkit-fill-available;
-overscroll-behavior: none;
-overflow: hidden;
-}
-
-#app {
-display: flex;
-flex-direction: column;
-height: 100vh;
-height: -webkit-fill-available;
-max-width: 480px;
-margin: 0 auto;
-position: relative;
-}
-
-/* HEADER */
-.header {
-padding: calc(var(–safe-top) + 16px) 24px 14px;
-border-bottom: 1px solid var(–border);
-display: flex;
-align-items: center;
-justify-content: space-between;
-background: var(–bg);
-flex-shrink: 0;
-}
-
-.header-left .date-label {
-font-size: 10px;
-color: var(–text-dim);
-letter-spacing: 3px;
-text-transform: uppercase;
-}
-
-.header-left .logo {
-font-family: ‘Syne’, sans-serif;
-font-size: 24px;
-font-weight: 800;
-letter-spacing: -1px;
-color: var(–text);
-}
-
-.logo span { color: var(–accent); }
-
-.header-right {
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.streak-badge {
-background: #1a1a2e;
-border: 1px solid var(–accent);
-border-radius: 20px;
-padding: 4px 12px;
-font-size: 11px;
-color: var(–accent);
-display: none;
-}
-
-.status-dot {
-width: 8px;
-height: 8px;
-border-radius: 50%;
-background: var(–text-muted);
-transition: background 0.3s;
-}
-
-/* CONTENT */
-.content {
-flex: 1;
-overflow-y: auto;
--webkit-overflow-scrolling: touch;
-padding: 20px 24px;
-padding-bottom: calc(80px + var(–safe-bottom));
-}
-
-/* BOTTOM NAV */
-.nav {
-position: fixed;
-bottom: 0;
-left: 50%;
-transform: translateX(-50%);
-width: 100%;
-max-width: 480px;
-background: #0d0d15;
-border-top: 1px solid var(–border);
-display: flex;
-padding: 8px 0;
-padding-bottom: calc(8px + var(–safe-bottom));
-z-index: 100;
-}
-
-.nav-item {
-flex: 1;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 3px;
-cursor: pointer;
-padding: 6px 0;
-background: none;
-border: none;
-color: inherit;
-font-family: inherit;
-}
-
-.nav-icon { font-size: 20px; }
-
-.nav-label {
-font-size: 9px;
-letter-spacing: 1px;
-text-transform: uppercase;
-color: var(–text-muted);
-transition: color 0.2s;
-}
-
-.nav-item.active .nav-label { color: var(–accent); }
-
-.nav-dot {
-width: 4px;
-height: 4px;
-border-radius: 50%;
-background: var(–accent);
-opacity: 0;
-transition: opacity 0.2s;
-}
-
-.nav-item.active .nav-dot { opacity: 1; }
-
-/* SECTION TITLE */
-.section-title {
-font-size: 11px;
-color: var(–accent);
-letter-spacing: 3px;
-text-transform: uppercase;
-margin-bottom: 6px;
-}
-
-.section-sub {
-font-size: 12px;
-color: var(–text-dim);
-margin-bottom: 24px;
-line-height: 1.6;
-}
-
-/* CARD */
-.card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 14px;
-padding: 16px;
-margin-bottom: 16px;
-}
-
-.card-title {
-font-size: 10px;
-color: var(–text-dim);
-letter-spacing: 2px;
-text-transform: uppercase;
-margin-bottom: 14px;
-}
-
-/* STATS GRID */
-.stats-grid {
-display: grid;
-grid-template-columns: 1fr 1fr 1fr;
-gap: 10px;
-margin-bottom: 16px;
-}
-
-.stat-card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 12px;
-padding: 14px 10px;
-text-align: center;
-}
-
-.stat-value {
-font-family: ‘Syne’, sans-serif;
-font-size: 22px;
-font-weight: 700;
-color: var(–text);
-}
-
-.stat-unit { font-size: 10px; color: var(–text-dim); }
-
-.stat-label {
-font-size: 9px;
-color: var(–text-muted);
-letter-spacing: 1px;
-text-transform: uppercase;
-margin-top: 3px;
-}
-
-/* BAR CHART */
-.bar-chart {
-display: flex;
-gap: 6px;
-align-items: flex-end;
-height: 60px;
-}
-
-.bar-col {
-flex: 1;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 4px;
-height: 100%;
-justify-content: flex-end;
-}
-
-.bar {
-width: 100%;
-border-radius: 4px;
-min-height: 4px;
-transition: height 0.5s ease;
-}
-
-.bar-label {
-font-size: 8px;
-color: #444;
-letter-spacing: 1px;
-}
-
-/* TODAY STATUS */
-.status-row {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 10px 0;
-border-bottom: 1px solid #1a1a2e;
-}
-
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: -apple-system, system-ui, sans-serif; }
+body { background: #0a0a0f; color: #e8e4d9; min-height: 100vh; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+.app { max-width: 480px; margin: 0 auto; padding: 20px 20px 100px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; }
+.logo { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
+.logo span { color: #7c6af7; }
+.date { font-size: 11px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+.streak { background: #1a1a2e; border: 1px solid #7c6af7; color: #7c6af7; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+.section-title { font-size: 12px; color: #7c6af7; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.section-sub { font-size: 12px; color: #666; margin-bottom: 20px; }
+.card { background: #111118; border: 1px solid #1e1e2e; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.card-title { font-size: 10px; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+.stat { background: #111118; border: 1px solid #1e1e2e; border-radius: 12px; padding: 12px; text-align: center; }
+.stat-v { font-size: 22px; font-weight: 700; }
+.stat-l { font-size: 9px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.bars { display: flex; gap: 6px; align-items: flex-end; height: 60px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar { width: 100%; border-radius: 3px; min-height: 4px; transition: height 0.4s; }
+.bar-lbl { font-size: 9px; color: #444; }
+.status-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #1a1a2e; }
 .status-row:last-child { border-bottom: none; }
-
-.status-left {
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.check-circle {
-width: 22px;
-height: 22px;
-border-radius: 50%;
-border: 2px solid var(–text-muted);
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 11px;
-color: var(–bg);
-transition: all 0.3s;
-flex-shrink: 0;
-}
-
-.check-circle.done {
-background: var(–green);
-border-color: var(–green);
-}
-
-.status-text {
-font-size: 13px;
-color: var(–text-dim);
-transition: color 0.3s;
-}
-
-.status-text.done { color: var(–text); }
-
-.start-btn {
-background: transparent;
-border: 1px solid var(–accent);
-color: var(–accent);
-border-radius: 8px;
-padding: 5px 12px;
-font-size: 11px;
-font-family: inherit;
-cursor: pointer;
-letter-spacing: 1px;
-}
-
-/* FORM ELEMENTS */
-.form-group { margin-bottom: 18px; }
-
-.form-label {
-font-size: 10px;
-color: var(–text-dim);
-letter-spacing: 2px;
-text-transform: uppercase;
-display: block;
-margin-bottom: 8px;
-}
-
-input[type=“time”], textarea {
-width: 100%;
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 10px;
-padding: 13px 14px;
-color: var(–text);
-font-size: 16px;
-font-family: inherit;
-outline: none;
-transition: border-color 0.2s;
--webkit-appearance: none;
-}
-
-input[type=“time”]:focus, textarea:focus {
-border-color: var(–accent);
-}
-
-textarea {
-font-size: 13px;
-resize: none;
-line-height: 1.6;
-}
-
-textarea::placeholder { color: var(–text-muted); }
-
-input[type=“range”] {
-width: 100%;
-accent-color: var(–accent);
-margin: 4px 0;
-}
-
-.range-labels {
-display: flex;
-justify-content: space-between;
-font-size: 10px;
-color: #444;
-margin-top: 4px;
-}
-
-/* TOGGLE */
-.toggle-row {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 11px 0;
-border-bottom: 1px solid #1a1a2e;
-}
-
+.check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #333; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; margin-right: 10px; }
+.check.done { background: #4ade80; border-color: #4ade80; color: #0a0a0f; }
+.btn-sm { background: transparent; border: 1px solid #7c6af7; color: #7c6af7; border-radius: 8px; padding: 4px 12px; font-size: 11px; cursor: pointer; }
+label { display: block; font-size: 10px; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; margin-top: 14px; }
+input, textarea { width: 100%; background: #111118; border: 1px solid #1e1e2e; border-radius: 10px; padding: 12px; color: #e8e4d9; font-size: 16px; font-family: inherit; -webkit-appearance: none; }
+textarea { resize: none; font-size: 13px; line-height: 1.6; }
+input[type="range"] { -webkit-appearance: none; background: transparent; padding: 0; border: none; accent-color: #7c6af7; }
+.btn { width: 100%; background: #7c6af7; color: white; border: none; border-radius: 12px; padding: 16px; font-size: 14px; font-weight: 600; margin-top: 16px; cursor: pointer; font-family: inherit; }
+.btn:disabled { background: #1e1e2e; color: #555; }
+.btn2 { width: 100%; background: transparent; border: 1px solid #333; color: #888; border-radius: 12px; padding: 14px; margin-top: 12px; font-size: 13px; cursor: pointer; font-family: inherit; }
+.ai-box { background: #111118; border: 1px solid #7c6af7; border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+.ai-box .card-title { color: #7c6af7; }
+.ai-text { font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1a1a2e; }
 .toggle-row:last-child { border-bottom: none; }
-
-.toggle-label { font-size: 13px; color: #bbb; }
-
-.toggle {
-width: 46px;
-height: 26px;
-border-radius: 13px;
-background: var(–text-muted);
-position: relative;
-cursor: pointer;
-transition: background 0.2s;
-flex-shrink: 0;
-}
-
-.toggle.on { background: var(–accent); }
-
-.toggle-knob {
-position: absolute;
-top: 3px;
-left: 3px;
-width: 20px;
-height: 20px;
-border-radius: 50%;
-background: #fff;
-transition: left 0.2s;
-box-shadow: 0 1px 4px rgba(0,0,0,0.4);
-}
-
-.toggle.on .toggle-knob { left: 23px; }
-
-/* PRIMARY BUTTON */
-.btn-primary {
-width: 100%;
-background: var(–accent);
-border: none;
-border-radius: 13px;
-padding: 17px;
-color: #fff;
-font-size: 14px;
-font-family: ‘Syne’, sans-serif;
-font-weight: 600;
-cursor: pointer;
-letter-spacing: 0.5px;
-transition: opacity 0.2s, transform 0.1s;
-margin-top: 4px;
-}
-
-.btn-primary:disabled {
-background: var(–border);
-color: var(–text-dim);
-cursor: not-allowed;
-}
-
-.btn-primary:active:not(:disabled) { transform: scale(0.98); }
-
-.btn-secondary {
-width: 100%;
-background: transparent;
-border: 1px solid var(–border);
-border-radius: 13px;
-padding: 15px;
-color: var(–text-dim);
-font-size: 13px;
-font-family: inherit;
-cursor: pointer;
-margin-top: 12px;
-}
-
-/* AI RESPONSE */
-.ai-card {
-background: var(–surface);
-border: 1px solid var(–accent);
-border-radius: 14px;
-padding: 20px;
-margin-bottom: 16px;
-animation: fadeIn 0.4s ease;
-}
-
-.ai-title {
-font-size: 10px;
-color: var(–accent);
-letter-spacing: 2px;
-text-transform: uppercase;
-margin-bottom: 14px;
-}
-
-.ai-text {
-font-size: 13px;
-color: var(–text);
-line-height: 1.85;
-white-space: pre-wrap;
-}
-
-/* LOADING */
-.loading-state {
-text-align: center;
-padding: 40px 20px;
-}
-
-.loading-dots {
-display: flex;
-justify-content: center;
-gap: 6px;
-margin-bottom: 16px;
-}
-
-.loading-dot {
-width: 8px;
-height: 8px;
-border-radius: 50%;
-background: var(–accent);
-animation: pulse 1.4s ease-in-out infinite;
-}
-
-.loading-dot:nth-child(2) { animation-delay: 0.2s; }
-.loading-dot:nth-child(3) { animation-delay: 0.4s; }
-
-.loading-text {
-font-size: 12px;
-color: var(–text-dim);
-letter-spacing: 1px;
-}
-
-/* EMPTY STATE */
-.empty-state {
-background: var(–surface);
-border: 1px dashed var(–border);
-border-radius: 14px;
-padding: 32px 20px;
-text-align: center;
-}
-
-.empty-icon { font-size: 36px; margin-bottom: 12px; }
-
-.empty-text {
-font-size: 13px;
-color: var(–text-dim);
-line-height: 1.7;
-}
-
-.empty-count {
-margin-top: 14px;
-font-size: 11px;
-color: var(–text-muted);
-}
-
-@keyframes fadeIn {
-from { opacity: 0; transform: translateY(8px); }
-to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-40% { transform: scale(1); opacity: 1; }
-}
-
-/* SCREEN ANIMATIONS */
-.screen { animation: fadeIn 0.25s ease; }
-
-/* COACH DATA SUMMARY */
-.data-pill {
-display: inline-block;
-background: #1a1a2e;
-border: 1px solid var(–border);
-border-radius: 20px;
-padding: 4px 12px;
-font-size: 11px;
-color: var(–text-dim);
-margin-right: 6px;
-margin-bottom: 8px;
-}
-
-/* API KEY MODAL */
-.modal-overlay {
-position: fixed;
-inset: 0;
-background: rgba(0,0,0,0.85);
-z-index: 200;
-display: flex;
-align-items: flex-end;
-justify-content: center;
-padding-bottom: var(–safe-bottom);
-}
-
-.modal {
-background: #13131f;
-border: 1px solid var(–border);
-border-radius: 20px 20px 0 0;
-padding: 28px 24px 32px;
-width: 100%;
-max-width: 480px;
-animation: slideUp 0.3s ease;
-}
-
-.modal-title {
-font-family: ‘Syne’, sans-serif;
-font-size: 18px;
-font-weight: 700;
-color: var(–text);
-margin-bottom: 8px;
-}
-
-.modal-sub {
-font-size: 12px;
-color: var(–text-dim);
-line-height: 1.7;
-margin-bottom: 20px;
-}
-
-.modal-sub a {
-color: var(–accent);
-text-decoration: none;
-}
-
-.modal-input {
-width: 100%;
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 10px;
-padding: 13px 14px;
-color: var(–text);
-font-size: 14px;
-font-family: inherit;
-outline: none;
-margin-bottom: 14px;
-}
-
-.modal-input:focus { border-color: var(–accent); }
-
-@keyframes slideUp {
-from { transform: translateY(100%); }
-to { transform: translateY(0); }
-}
-
-/* SCROLLBAR */
-.content::-webkit-scrollbar { display: none; }
+.toggle { width: 42px; height: 24px; border-radius: 12px; background: #333; position: relative; cursor: pointer; flex-shrink: 0; }
+.toggle.on { background: #7c6af7; }
+.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; transition: left 0.2s; }
+.toggle.on::after { left: 21px; }
+.nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #0d0d15; border-top: 1px solid #1e1e2e; display: flex; padding: 8px 0 calc(env(safe-area-inset-bottom) + 8px); }
+.nav button { flex: 1; background: none; border: none; color: #444; padding: 8px 0; font-family: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.nav button.active { color: #7c6af7; }
+.nav-icon { font-size: 20px; }
+.nav-lbl { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+.empty { text-align: center; padding: 30px 20px; color: #555; font-size: 13px; border: 1px dashed #333; border-radius: 12px; }
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; display: flex; align-items: flex-end; }
+.modal { background: #13131f; width: 100%; max-width: 480px; margin: 0 auto; border-radius: 20px 20px 0 0; padding: 24px 20px calc(env(safe-area-inset-bottom) + 24px); }
+.modal h2 { font-size: 18px; margin-bottom: 10px; }
+.modal p { font-size: 12px; color: #888; line-height: 1.6; margin-bottom: 16px; }
+.modal a { color: #7c6af7; }
+.err { color: #f87171; font-size: 12px; margin-top: 8px; }
 </style>
-
 </head>
 <body>
 
-<div id="app">
-  <div class="header">
-    <div class="header-left">
-      <div class="date-label" id="dateLabel"></div>
-      <div class="logo">Day<span>OS</span></div>
-    </div>
-    <div class="header-right">
-      <div class="streak-badge" id="streakBadge">🔥 0 days</div>
-      <div class="status-dot" id="statusDot"></div>
-    </div>
-  </div>
+<div class="app" id="app"></div>
 
-  <div class="content" id="content"></div>
+<nav class="nav">
+  <button onclick="go('dashboard')" id="n-dashboard" class="active"><span class="nav-icon">⚡</span><span class="nav-lbl">Today</span></button>
+  <button onclick="go('morning')" id="n-morning"><span class="nav-icon">☀️</span><span class="nav-lbl">Morning</span></button>
+  <button onclick="go('evening')" id="n-evening"><span class="nav-icon">🌙</span><span class="nav-lbl">Evening</span></button>
+  <button onclick="go('coach')" id="n-coach"><span class="nav-icon">🎯</span><span class="nav-lbl">Coach</span></button>
+</nav>
 
-  <nav class="nav">
-    <button class="nav-item" onclick="navigate('morning')" id="nav-morning">
-      <span class="nav-icon">☀️</span>
-      <span class="nav-label">Morning</span>
-      <div class="nav-dot"></div>
-    </button>
-    <button class="nav-item" onclick="navigate('evening')" id="nav-evening">
-      <span class="nav-icon">🌙</span>
-      <span class="nav-label">Evening</span>
-      <div class="nav-dot"></div>
-    </button>
-    <button class="nav-item active" onclick="navigate('dashboard')" id="nav-dashboard">
-      <span class="nav-icon">⚡</span>
-      <span class="nav-label">Today</span>
-      <div class="nav-dot"></div>
-    </button>
-    <button class="nav-item" onclick="navigate('coach')" id="nav-coach">
-      <span class="nav-icon">🎯</span>
-      <span class="nav-label">Coach</span>
-      <div class="nav-dot"></div>
-    </button>
-  </nav>
-</div>
-
-<!-- API KEY MODAL -->
-
-<div class="modal-overlay" id="apiModal" style="display:none">
+<div class="modal-bg" id="keyModal" style="display:none">
   <div class="modal">
-    <div class="modal-title">Connect DayOS AI</div>
-    <div class="modal-sub">
-      Enter your free OpenRouter API key to enable AI coaching. Get one free at
-      <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>
-      — 100% free, no credit card, no age restriction.<br><br>
-      Your key is stored only on this device, never sent anywhere except OpenRouter.
-    </div>
-    <input class="modal-input" type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
-    <button class="btn-primary" onclick="saveApiKey()">Save & Continue →</button>
-    <button class="btn-secondary" onclick="closeModal()">Skip for now</button>
+    <h2>Connect DayOS</h2>
+    <p>Enter your free OpenRouter API key. Get one at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a> — no credit card, no age limit.</p>
+    <input type="password" id="keyInput" placeholder="sk-or-v1-..." style="margin-bottom:12px">
+    <button class="btn" onclick="saveKey()">Save & Continue</button>
   </div>
 </div>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────────────────────────
-let currentScreen = 'dashboard';
-let logs = [];
-let apiKey = '';
-let aiResult = '';
-let isLoading = false;
-
 const TODAY = new Date().toISOString().split('T')[0];
+const IDEAL = "PB is 15, student, founder of FlowForge automation, trains badminton+weights. Ideal day: wake 5-6AM, exercise+protein+coffee, morning reading, 2hr deep work, 20min nap, free time, night routine, sleep 10PM. Wants: freedom, direction. Struggles: drift, scrolling, late nights.";
 
-const IDEAL_DAY = `PB's ideal day: Wake 5-6AM, exercise + protein + coffee, morning reading/journaling, 2hr deep work/building block, 20min nap, free time/social, night routine (journal, grooming, warm shower), sleep 10PM. PB is 15, student, founder of FlowForge automation, trains badminton + weights. Core desire: freedom, direction, discipline. Main struggle: drift, scrolling, late nights from social events.`;
+let logs = JSON.parse(localStorage.getItem('dayos_logs') || '[]');
+let key = localStorage.getItem('dayos_key') || '';
+let screen = 'dashboard';
+let ai = '';
+let loading = false;
+let err = '';
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  loadData();
-  document.getElementById('dateLabel').textContent =
-    new Date().toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' });
-  updateHeader();
-  render();
-  if (!apiKey) setTimeout(() => document.getElementById('apiModal').style.display = 'flex', 800);
-});
+let mForm = { wake: '', energy: 3, notes: '' };
+let eForm = { sleep: '', ex: false, dw: false, mr: false, nr: false, wins: '', losses: '' };
 
-// ─── STORAGE ─────────────────────────────────────────────────────────────────
-function loadData() {
-  try { logs = JSON.parse(localStorage.getItem('dayos_logs') || '[]'); } catch { logs = []; }
-  apiKey = localStorage.getItem('dayos_key') || '';
+function save() { localStorage.setItem('dayos_logs', JSON.stringify(logs)); }
+function saveKey() {
+  const v = document.getElementById('keyInput').value.trim();
+  if (!v) return;
+  key = v;
+  localStorage.setItem('dayos_key', v);
+  document.getElementById('keyModal').style.display = 'none';
 }
-
-function saveLogs() {
-  localStorage.setItem('dayos_logs', JSON.stringify(logs));
+function todayLog() { return logs.find(l => l.date === TODAY) || {}; }
+function updateToday(d) {
+  const i = logs.findIndex(l => l.date === TODAY);
+  if (i >= 0) logs[i] = { ...logs[i], ...d };
+  else logs.push({ date: TODAY, ...d });
+  save();
 }
-
-function saveApiKey() {
-  const val = document.getElementById('apiKeyInput').value.trim();
-  if (!val) return;
-  apiKey = val;
-  localStorage.setItem('dayos_key', val);
-  closeModal();
-}
-
-function closeModal() {
-  document.getElementById('apiModal').style.display = 'none';
-}
-
-// ─── LOG HELPERS ──────────────────────────────────────────────────────────────
-function getTodayLog() { return logs.find(l => l.date === TODAY) || {}; }
-
-function updateLog(data) {
-  const idx = logs.findIndex(l => l.date === TODAY);
-  if (idx >= 0) { logs[idx] = { ...logs[idx], ...data }; }
-  else { logs.push({ date: TODAY, ...data }); }
-  saveLogs();
-}
-
-function getDayScore(log) {
-  if (!log || (!log.morningBriefing && !log.eveningCheckin)) return null;
+function score(l) {
+  if (!l || (!l.m && !l.e)) return null;
   let s = 0;
-  const wh = parseInt((log.morningBriefing?.wakeTime || '10:00').split(':')[0]);
-  const sh = parseInt((log.eveningCheckin?.sleepTime || '23:00').split(':')[0]);
+  const wh = parseInt((l.m?.wake || '10:00').split(':')[0]);
+  const sh = parseInt((l.e?.sleep || '23:00').split(':')[0]);
   if (wh <= 6) s += 2; else if (wh <= 8) s += 1;
   if (sh <= 22) s += 2; else if (sh <= 23) s += 1;
-  if (log.exercised) s += 2;
-  if (log.deepWork) s += 2;
-  if (log.morningRoutine) s += 1;
-  if (log.nightRoutine) s += 1;
+  if (l.ex) s += 2;
+  if (l.dw) s += 2;
+  if (l.mr) s += 1;
+  if (l.nr) s += 1;
   return Math.min(10, s);
 }
-
 function scoreColor(s) {
   if (s === null) return '#1e1e2e';
   if (s >= 7) return '#4ade80';
   if (s >= 4) return '#facc15';
   return '#f87171';
 }
-
 function getStreak() {
-  const sorted = [...logs].sort((a,b) => new Date(b.date)-new Date(a.date));
-  let streak = 0;
-  for (const l of sorted) { if (getDayScore(l) >= 5) streak++; else break; }
-  return streak;
+  const sorted = [...logs].sort((a,b) => new Date(b.date) - new Date(a.date));
+  let n = 0;
+  for (const l of sorted) { if (score(l) >= 5) n++; else break; }
+  return n;
 }
 
-function getAvg() {
-  const scored = logs.filter(l => getDayScore(l) !== null);
-  if (!scored.length) return null;
-  return (scored.reduce((s,l) => s + getDayScore(l), 0) / scored.length).toFixed(1);
-}
-
-// ─── HEADER ───────────────────────────────────────────────────────────────────
-function updateHeader() {
-  const streak = getStreak();
-  const badge = document.getElementById('streakBadge');
-  if (streak > 0) { badge.style.display = 'block'; badge.textContent = `🔥 ${streak} day${streak !== 1 ? 's' : ''}`; }
-  else { badge.style.display = 'none'; }
-
-  const dot = document.getElementById('statusDot');
-  const tl = getTodayLog();
-  if (tl.morningBriefing && tl.eveningCheckin) dot.style.background = '#4ade80';
-  else if (tl.morningBriefing) dot.style.background = '#facc15';
-  else dot.style.background = '#333';
-}
-
-// ─── NAVIGATION ──────────────────────────────────────────────────────────────
-function navigate(screen) {
-  currentScreen = screen;
-  aiResult = '';
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('nav-' + screen).classList.add('active');
-  render();
-}
-
-// ─── API CALL (OpenRouter - free models with fallback) ────────────────────────
-const FREE_MODELS = [
+const MODELS = [
   'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemma-3-27b-it:free',
-  'mistralai/mistral-small-3.1-24b-instruct:free',
-  'meta-llama/llama-3.1-8b-instruct:free',
-  'openrouter/free'
+  'google/gemma-2-9b-it:free',
+  'mistralai/mistral-7b-instruct:free',
+  'meta-llama/llama-3.2-3b-instruct:free'
 ];
 
-async function callClaude(prompt) {
-  if (!apiKey) {
-    document.getElementById('apiModal').style.display = 'flex';
-    throw new Error('No API key');
-  }
-  let lastError = '';
-  for (const model of FREE_MODELS) {
+async function askAI(prompt) {
+  if (!key) { document.getElementById('keyModal').style.display = 'flex'; throw new Error('No key'); }
+  let lastErr = '';
+  for (const m of MODELS) {
     try {
-      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + apiKey,
-          'HTTP-Referer': window.location.origin,
-          'X-Title': 'DayOS'
-        },
-        body: JSON.stringify({
-          model: model,
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: prompt }]
-        })
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key, 'HTTP-Referer': 'https://dayos.app', 'X-Title': 'DayOS' },
+        body: JSON.stringify({ model: m, max_tokens: 800, messages: [{ role: 'user', content: prompt }] })
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        lastError = err?.error?.message || 'API error ' + res.status;
-        continue;
-      }
-      const data = await res.json();
-      const text = data.choices?.[0]?.message?.content;
-      if (text) return text;
-      lastError = 'Empty response from ' + model;
-    } catch(e) {
-      lastError = e.message;
-    }
+      if (!r.ok) { const e = await r.json().catch(() => ({})); lastErr = (e.error && e.error.message) || ('HTTP ' + r.status); continue; }
+      const d = await r.json();
+      const t = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
+      if (t) return t;
+      lastErr = 'Empty reply from ' + m;
+    } catch (e) { lastErr = e.message; }
   }
-  throw new Error(lastError || 'All free models unavailable right now. Try again in a minute.');
+  throw new Error(lastErr || 'All models failed');
 }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
+function go(s) { screen = s; ai = ''; err = ''; render(); }
+
 function render() {
-  const c = document.getElementById('content');
-  updateHeader();
-  if (currentScreen === 'dashboard') c.innerHTML = renderDashboard();
-  else if (currentScreen === 'morning') c.innerHTML = renderMorning();
-  else if (currentScreen === 'evening') c.innerHTML = renderEvening();
-  else if (currentScreen === 'coach') c.innerHTML = renderCoach();
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('n-' + screen).classList.add('active');
+  const app = document.getElementById('app');
+  if (screen === 'dashboard') app.innerHTML = renderDash();
+  else if (screen === 'morning') app.innerHTML = renderMorning();
+  else if (screen === 'evening') app.innerHTML = renderEvening();
+  else if (screen === 'coach') app.innerHTML = renderCoach();
 }
 
-// ─── DASHBOARD ────────────────────────────────────────────────────────────────
-function renderDashboard() {
+function header() {
   const streak = getStreak();
-  const avg = getAvg();
-  const tl = getTodayLog();
+  const date = new Date().toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' });
+  return `<div class="header"><div><div class="date">${date}</div><div class="logo">Day<span>OS</span></div></div>${streak > 0 ? `<div class="streak">🔥 ${streak}d</div>` : ''}</div>`;
+}
 
+function renderDash() {
+  const streak = getStreak();
+  const scored = logs.filter(l => score(l) !== null);
+  const avg = scored.length ? (scored.reduce((s,l) => s + score(l), 0) / scored.length).toFixed(1) : '—';
+  const tl = todayLog();
   const last7 = Array.from({length:7}, (_,i) => {
     const d = new Date(); d.setDate(d.getDate() - (6-i));
     const ds = d.toISOString().split('T')[0];
-    const log = logs.find(l => l.date === ds);
-    const score = getDayScore(log);
-    const label = d.toLocaleDateString('en',{weekday:'short'}).substring(0,2).toUpperCase();
-    return { label, score, ds };
+    const l = logs.find(x => x.date === ds);
+    return { lbl: d.toLocaleDateString('en',{weekday:'short'}).substring(0,2).toUpperCase(), s: score(l) };
   });
-
-  const bars = last7.map(({label, score}) => {
-    const h = score !== null ? Math.max(4, (score/10)*52) : 4;
-    return `<div class="bar-col">
-      <div class="bar" style="height:${h}px;background:${scoreColor(score)}"></div>
-      <div class="bar-label">${label}</div>
-    </div>`;
+  const bars = last7.map(x => {
+    const h = x.s !== null ? Math.max(4, (x.s/10)*52) : 4;
+    return `<div class="bar-col"><div class="bar" style="height:${h}px;background:${scoreColor(x.s)}"></div><div class="bar-lbl">${x.lbl}</div></div>`;
   }).join('');
-
-  const lastAI = tl.eveningCheckin?.response || tl.morningBriefing?.response;
-  const aiBlock = lastAI
-    ? `<div class="ai-card">
-        <div class="ai-title">${tl.eveningCheckin?.response ? "Tonight's Debrief" : "Today's Game Plan"}</div>
-        <div class="ai-text">${lastAI}</div>
-       </div>`
-    : `<div class="empty-state">
-        <div class="empty-icon">☀️</div>
-        <div class="empty-text">Start your morning briefing to get today's AI game plan</div>
-       </div>`;
-
-  return `<div class="screen">
-    <div class="section-title" style="margin-bottom:20px">Overview</div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value">${streak > 0 ? streak : '—'}<span class="stat-unit">${streak > 0 ? 'd' : ''}</span></div>
-        <div class="stat-label">Streak</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${avg ?? '—'}<span class="stat-unit">${avg ? '/10' : ''}</span></div>
-        <div class="stat-label">Avg</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${logs.length}<span class="stat-unit">d</span></div>
-        <div class="stat-label">Logged</div>
-      </div>
+  const lastAI = tl.e?.response || tl.m?.response;
+  return header() + `
+    <div class="section-title">Overview</div>
+    <div class="section-sub" style="margin-bottom:20px">Your real trajectory.</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-v">${streak || '—'}</div><div class="stat-l">Streak</div></div>
+      <div class="stat"><div class="stat-v">${avg}</div><div class="stat-l">Avg</div></div>
+      <div class="stat"><div class="stat-v">${logs.length}</div><div class="stat-l">Logged</div></div>
     </div>
-
+    <div class="card"><div class="card-title">Last 7 Days</div><div class="bars">${bars}</div></div>
     <div class="card">
-      <div class="card-title">Last 7 Days</div>
-      <div class="bar-chart">${bars}</div>
+      <div class="card-title">Today</div>
+      <div class="status-row"><div><span class="check ${tl.m ? 'done' : ''}">${tl.m ? '✓' : ''}</span>Morning briefing</div>${!tl.m ? `<button class="btn-sm" onclick="go('morning')">Start →</button>` : ''}</div>
+      <div class="status-row"><div><span class="check ${tl.e ? 'done' : ''}">${tl.e ? '✓' : ''}</span>Evening check-in</div>${!tl.e ? `<button class="btn-sm" onclick="go('evening')">Start →</button>` : ''}</div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Today's Status</div>
-      <div class="status-row">
-        <div class="status-left">
-          <div class="check-circle ${tl.morningBriefing ? 'done' : ''}">${tl.morningBriefing ? '✓' : ''}</div>
-          <span class="status-text ${tl.morningBriefing ? 'done' : ''}">Morning briefing</span>
-        </div>
-        ${!tl.morningBriefing ? `<button class="start-btn" onclick="navigate('morning')">Start →</button>` : ''}
-      </div>
-      <div class="status-row">
-        <div class="status-left">
-          <div class="check-circle ${tl.eveningCheckin ? 'done' : ''}">${tl.eveningCheckin ? '✓' : ''}</div>
-          <span class="status-text ${tl.eveningCheckin ? 'done' : ''}">Evening check-in</span>
-        </div>
-        ${!tl.eveningCheckin ? `<button class="start-btn" onclick="navigate('evening')">Start →</button>` : ''}
-      </div>
-    </div>
-
-    ${aiBlock}
-  </div>`;
+    ${lastAI ? `<div class="ai-box"><div class="card-title">${tl.e?.response ? "Tonight's Debrief" : "Today's Game Plan"}</div><div class="ai-text">${escapeHtml(lastAI)}</div></div>` : `<div class="empty">Complete your morning briefing to get today's AI game plan</div>`}
+  `;
 }
 
-// ─── MORNING ─────────────────────────────────────────────────────────────────
-let mForm = { wakeTime: '', energy: 3, notes: '' };
-
 function renderMorning() {
-  const tl = getTodayLog();
-  if (aiResult) return renderAIResult("Today's Game Plan", aiResult, "Back to Dashboard", () => { aiResult=''; navigate('dashboard'); });
-  if (isLoading) return renderLoading("Building your game plan...");
-
-  return `<div class="screen">
+  if (ai) return header() + `<div class="section-title">Morning Briefing</div><div class="section-sub">Your game plan</div><div class="ai-box"><div class="card-title">Today's Plan</div><div class="ai-text">${escapeHtml(ai)}</div></div><button class="btn2" onclick="go('dashboard')">Back to Dashboard</button>`;
+  if (loading) return header() + `<div class="empty" style="padding:60px 20px">🧠 Building your game plan...</div>`;
+  return header() + `
     <div class="section-title">Morning Briefing</div>
-    <div class="section-sub">Tell DayOS how you started. Get your game plan.</div>
-
-    <div class="form-group">
-      <label class="form-label">Wake Time</label>
-      <input type="time" id="wakeTime" value="${mForm.wakeTime}" onchange="mForm.wakeTime=this.value">
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Energy Level: <span id="energyVal">${mForm.energy}</span>/5</label>
-      <input type="range" min="1" max="5" value="${mForm.energy}"
-        oninput="mForm.energy=this.value;document.getElementById('energyVal').textContent=this.value">
-      <div class="range-labels"><span>Barely alive</span><span>Ready to build</span></div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Anything on your mind? (optional)</label>
-      <textarea id="morningNotes" rows="3" placeholder="Events today, how you feel, what you want to get done..."
-        onchange="mForm.notes=this.value">${mForm.notes}</textarea>
-
-```
-</div>
-
-<button class="btn-primary" onclick="submitMorning()" ${!mForm.wakeTime ? 'disabled' : ''}>
-  Get Today's Game Plan →
-</button>
-```
-
-  </div>`;
+    <div class="section-sub">Tell DayOS how you started</div>
+    <label>Wake Time</label>
+    <input type="time" id="wakeTime" value="${mForm.wake}" onchange="mForm.wake=this.value">
+    <label>Energy: <span id="eVal">${mForm.energy}</span>/5</label>
+    <input type="range" min="1" max="5" value="${mForm.energy}" oninput="mForm.energy=this.value;document.getElementById('eVal').textContent=this.value">
+    <label>Notes (optional)</label>
+    <textarea id="mNotes" rows="3" placeholder="Events today, how you feel..." onchange="mForm.notes=this.value">${mForm.notes}</textarea>
+    ${err ? `<div class="err">${err}</div>` : ''}
+    <button class="btn" onclick="submitMorning()">Get Game Plan →</button>
+  `;
 }
 
 async function submitMorning() {
-mForm.wakeTime = document.getElementById(‘wakeTime’).value;
-mForm.notes = document.getElementById(‘morningNotes’).value;
-if (!mForm.wakeTime) return;
-isLoading = true; render();
-try {
-const prompt = `You are DayOS, a direct life coach for PB.
-${IDEAL_DAY}
-
-Today PB woke at ${mForm.wakeTime}, energy ${mForm.energy}/5.
-Notes: “${mForm.notes || ‘none’}”
-
-Give PB a sharp morning briefing:
-
-1. One sentence: honest assessment of this start
-1. Today’s 3 priorities — specific, actionable
-1. One thing to watch out for today
-1. One direct closer — no fluff
-
-Under 180 words. Talk directly to PB.`; const response = await callClaude(prompt); updateLog({ morningBriefing: { ...mForm, response, time: new Date().toISOString() } }); aiResult = response; } catch(e) { aiResult = e.message === 'No API key' ? '' : `Error: ${e.message}. Check your API key in settings.`;
+  mForm.wake = document.getElementById('wakeTime').value;
+  mForm.notes = document.getElementById('mNotes').value;
+  if (!mForm.wake) { err = 'Please enter wake time'; render(); return; }
+  loading = true; err = ''; render();
+  try {
+    const p = `You are DayOS, a direct coach for PB. ${IDEAL}\n\nToday PB woke at ${mForm.wake}, energy ${mForm.energy}/5. Notes: "${mForm.notes || 'none'}"\n\nGive a sharp morning briefing:\n1. One sentence assessment\n2. Today's 3 priorities\n3. One thing to watch for\n4. One direct closer\n\nUnder 180 words. Direct, no fluff.`;
+    const r = await askAI(p);
+    updateToday({ m: { ...mForm, response: r } });
+    ai = r;
+  } catch(e) { err = e.message; }
+  loading = false; render();
 }
-isLoading = false; render();
-}
-
-// ─── EVENING ─────────────────────────────────────────────────────────────────
-let eForm = { sleepTime: ‘’, exercised: false, deepWork: false, morningRoutine: false, nightRoutine: false, wins: ‘’, losses: ‘’ };
 
 function renderEvening() {
-if (aiResult) return renderAIResult(“Tonight’s Debrief”, aiResult, “Back to Dashboard”, () => { aiResult=’’; navigate(‘dashboard’); });
-if (isLoading) return renderLoading(“Analyzing your day…”);
-
-const toggleRow = (key, label) => ` <div class="toggle-row"> <span class="toggle-label">${label}</span> <div class="toggle ${eForm[key] ? 'on' : ''}" onclick="eForm.${key}=!eForm.${key};render()"> <div class="toggle-knob"></div> </div> </div>`;
-
-return `<div class="screen">
-<div class="section-title">Evening Check-In</div>
-<div class="section-sub">2 minutes. Close the day right.</div>
-
-```
-<div class="form-group">
-  <label class="form-label">Sleep Time Last Night</label>
-  <input type="time" id="sleepTime" value="${eForm.sleepTime}" onchange="eForm.sleepTime=this.value">
-</div>
-
-<div class="card" style="padding:16px;margin-bottom:18px">
-  <div class="card-title">What happened today?</div>
-  ${toggleRow('exercised', 'Exercised')}
-  ${toggleRow('deepWork', 'Did deep work / built something')}
-  ${toggleRow('morningRoutine', 'Did morning routine')}
-  ${toggleRow('nightRoutine', 'Doing night routine tonight')}
-</div>
-
-<div class="form-group">
-  <label class="form-label">Today's Wins</label>
-  <textarea id="eWins" rows="2" placeholder="What actually went well?"
-    onchange="eForm.wins=this.value">${eForm.wins}</textarea>
-</div>
-
-<div class="form-group">
-  <label class="form-label">Where You Slipped</label>
-  <textarea id="eLosses" rows="2" placeholder="What drained your time or energy?"
-    onchange="eForm.losses=this.value">${eForm.losses}</textarea>
-</div>
-
-<button class="btn-primary" onclick="submitEvening()">Close the Day →</button>
-```
-
-  </div>`;
+  if (ai) return header() + `<div class="section-title">Evening Debrief</div><div class="section-sub">Day closed</div><div class="ai-box"><div class="card-title">Tonight's Debrief</div><div class="ai-text">${escapeHtml(ai)}</div></div><button class="btn2" onclick="go('dashboard')">Back to Dashboard</button>`;
+  if (loading) return header() + `<div class="empty" style="padding:60px 20px">🧠 Analyzing your day...</div>`;
+  const tog = (k, l) => `<div class="toggle-row"><span>${l}</span><div class="toggle ${eForm[k] ? 'on' : ''}" onclick="eForm.${k}=!eForm.${k};render()"></div></div>`;
+  return header() + `
+    <div class="section-title">Evening Check-In</div>
+    <div class="section-sub">2 minutes. Close the day right.</div>
+    <label>Sleep Time Last Night</label>
+    <input type="time" id="sleepTime" value="${eForm.sleep}" onchange="eForm.sleep=this.value">
+    <div class="card" style="margin-top:16px"><div class="card-title">Today</div>${tog('ex','Exercised')}${tog('dw','Deep work')}${tog('mr','Morning routine')}${tog('nr','Night routine')}</div>
+    <label>Wins</label>
+    <textarea id="eWins" rows="2" placeholder="What went well?" onchange="eForm.wins=this.value">${eForm.wins}</textarea>
+    <label>Where You Slipped</label>
+    <textarea id="eLosses" rows="2" placeholder="What drained you?" onchange="eForm.losses=this.value">${eForm.losses}</textarea>
+    ${err ? `<div class="err">${err}</div>` : ''}
+    <button class="btn" onclick="submitEvening()">Close the Day →</button>
+  `;
 }
 
 async function submitEvening() {
-eForm.sleepTime = document.getElementById(‘sleepTime’)?.value || eForm.sleepTime;
-eForm.wins = document.getElementById(‘eWins’)?.value || eForm.wins;
-eForm.losses = document.getElementById(‘eLosses’)?.value || eForm.losses;
-isLoading = true; render();
-const tl = getTodayLog();
-try {
-const prompt = `You are DayOS, a direct life coach for PB, 15 years old.
-${IDEAL_DAY}
-
-Tonight’s check-in:
-
-- Slept last night at: ${eForm.sleepTime || ‘unknown’}
-- Exercised: ${eForm.exercised ? ‘Yes’ : ‘No’}
-- Deep work: ${eForm.deepWork ? ‘Yes’ : ‘No’}
-- Morning routine: ${eForm.morningRoutine ? ‘Yes’ : ‘No’}
-- Night routine: ${eForm.nightRoutine ? ‘Yes’ : ‘No’}
-- Wins: “${eForm.wins || ‘none’}”
-- Losses: “${eForm.losses || ‘none’}”
-  ${tl.morningBriefing ? `- This morning energy was ${tl.morningBriefing.energy}/5, woke at ${tl.morningBriefing.wakeTime}` : ‘’}
-
-Give PB a direct end-of-day debrief:
-
-1. Score today 1-10 with one honest sentence
-1. The one thing that made or broke today
-1. One specific action for tomorrow morning
-1. One closing line — real, not soft
-
-Under 150 words. Talk directly to PB.`; const response = await callClaude(prompt); updateLog({ eveningCheckin: { ...eForm, response, time: new Date().toISOString() }, ...eForm }); aiResult = response; } catch(e) { aiResult = e.message === 'No API key' ? '' : `Error: ${e.message}`;
-}
-isLoading = false; render();
+  eForm.sleep = document.getElementById('sleepTime').value;
+  eForm.wins = document.getElementById('eWins').value;
+  eForm.losses = document.getElementById('eLosses').value;
+  loading = true; err = ''; render();
+  const tl = todayLog();
+  try {
+    const p = `You are DayOS, a direct coach for PB. ${IDEAL}\n\nTonight:\n- Slept at: ${eForm.sleep}\n- Exercised: ${eForm.ex}\n- Deep work: ${eForm.dw}\n- Morning routine: ${eForm.mr}\n- Night routine: ${eForm.nr}\n- Wins: "${eForm.wins}"\n- Losses: "${eForm.losses}"\n${tl.m ? `- Morning energy: ${tl.m.energy}/5, woke ${tl.m.wake}` : ''}\n\nGive end-of-day debrief:\n1. Score 1-10 with one sentence\n2. What made or broke today\n3. Action for tomorrow morning\n4. One closing line\n\nUnder 150 words. Direct.`;
+    const r = await askAI(p);
+    updateToday({ e: { ...eForm, response: r }, ex: eForm.ex, dw: eForm.dw, mr: eForm.mr, nr: eForm.nr });
+    ai = r;
+  } catch(e) { err = e.message; }
+  loading = false; render();
 }
 
-// ─── COACH ───────────────────────────────────────────────────────────────────
 function renderCoach() {
-if (aiResult) return renderAIResult(“Trajectory Analysis”, aiResult, “Analyze Again”, () => { aiResult=’’; render(); });
-if (isLoading) return renderLoading(“Reading your patterns…”);
-
-if (logs.length < 3) {
-return `<div class="screen"> <div class="section-title">Life Coach</div> <div class="section-sub">AI reads your real patterns and tells you the truth about where you're heading.</div> <div class="empty-state"> <div class="empty-icon">📊</div> <div class="empty-text">Complete at least 3 days of check-ins first. Then the coach can actually analyze your patterns — not guess.</div> <div class="empty-count">${logs.length}/3 days logged</div> </div> </div>`;
-}
-
-return `<div class="screen">
-<div class="section-title">Life Coach</div>
-<div class="section-sub">AI reads your real patterns and tells you the truth about where you’re heading.</div>
-
-```
-<div class="card">
-  <div class="card-title">Data available</div>
-  <div>
-    <span class="data-pill">${logs.length} days logged</span>
-    <span class="data-pill">Last ${Math.min(logs.length,14)} analyzed</span>
-    ${getStreak() > 0 ? `<span class="data-pill">🔥 ${getStreak()} streak</span>` : ''}
-  </div>
-</div>
-
-<button class="btn-primary" onclick="submitCoach()">Analyze My Trajectory →</button>
-```
-
-  </div>`;
+  if (ai) return header() + `<div class="section-title">Trajectory</div><div class="ai-box"><div class="card-title">Analysis</div><div class="ai-text">${escapeHtml(ai)}</div></div><button class="btn2" onclick="ai='';render()">Analyze Again</button>`;
+  if (loading) return header() + `<div class="empty" style="padding:60px 20px">🧠 Reading your patterns...</div>`;
+  if (logs.length < 3) return header() + `<div class="section-title">Life Coach</div><div class="section-sub">AI reads your patterns honestly</div><div class="empty">📊<br><br>Log at least 3 days first.<br><br>${logs.length}/3 days</div>`;
+  return header() + `
+    <div class="section-title">Life Coach</div>
+    <div class="section-sub">AI reads your patterns and tells you the truth</div>
+    <div class="card"><div class="card-title">Data</div>${logs.length} days logged · Last ${Math.min(logs.length,14)} analyzed</div>
+    ${err ? `<div class="err">${err}</div>` : ''}
+    <button class="btn" onclick="submitCoach()">Analyze My Trajectory →</button>
+  `;
 }
 
 async function submitCoach() {
-isLoading = true; render();
-const recent = logs.slice(-14);
-try {
-const summary = recent.map(l => ({
-date: l.date,
-woke: l.morningBriefing?.wakeTime,
-energy: l.morningBriefing?.energy,
-exercised: l.exercised,
-deepWork: l.deepWork,
-wins: l.eveningCheckin?.wins,
-losses: l.eveningCheckin?.losses,
-score: getDayScore(l)
-}));
-const prompt = `You are DayOS, an honest life coach for PB, 15 years old, founder of FlowForge automation, badminton + weight training, wants freedom and direction in life.
-${IDEAL_DAY}
-
-Last ${recent.length} days of logged data:
-${JSON.stringify(summary, null, 2)}
-
-Give PB a brutally honest trajectory analysis:
-
-1. What patterns are forming (good AND bad)
-1. The #1 habit dragging PB down right now
-1. The #1 habit that’s working — reinforce it
-1. At this trajectory, where is PB in 6 months? Be real.
-1. The single most important change to make this week
-
-Direct, no fluff. Talk like a mentor who actually cares. Under 300 words.`; aiResult = await callClaude(prompt); } catch(e) { aiResult = e.message === 'No API key' ? '' : `Error: ${e.message}`;
-}
-isLoading = false; render();
+  loading = true; err = ''; render();
+  try {
+    const recent = logs.slice(-14).map(l => ({ date: l.date, woke: l.m?.wake, energy: l.m?.energy, ex: l.ex, dw: l.dw, wins: l.e?.wins, losses: l.e?.losses, score: score(l) }));
+    const p = `You are DayOS, honest coach for PB. ${IDEAL}\n\nLast ${recent.length} days:\n${JSON.stringify(recent)}\n\nGive brutally honest trajectory analysis:\n1. Patterns forming (good AND bad)\n2. #1 habit dragging PB down\n3. #1 habit working — reinforce it\n4. At this trajectory, where in 6 months?\n5. Most important change this week\n\nUnder 300 words. Direct, no fluff.`;
+    ai = await askAI(p);
+  } catch(e) { err = e.message; }
+  loading = false; render();
 }
 
-// ─── SHARED COMPONENTS ────────────────────────────────────────────────────────
-function renderLoading(msg) {
-return `<div class="screen loading-state">
-<div class="loading-dots">
-<div class="loading-dot"></div>
-<div class="loading-dot"></div>
-<div class="loading-dot"></div>
-</div>
-<div class="loading-text">${msg}</div>
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-  </div>`;
-}
-
-function renderAIResult(title, text, backLabel, backFn) {
-window._aiBack = backFn;
-return `<div class="screen">
-<div class="ai-card">
-<div class="ai-title">${title}</div>
-<div class="ai-text">${text}</div>
-</div>
-<button class="btn-secondary" onclick="window._aiBack()">${backLabel}</button>
-
-  </div>`;
-}
+if (!key) document.getElementById('keyModal').style.display = 'flex';
+render();
 </script>
 </body>
 </html>
