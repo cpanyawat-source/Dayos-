@@ -133,13 +133,6 @@ const SCREEN_TIME = [
   {k:"high", label:"4-6h", sub:"Heavy"},
   {k:"extreme", label:"6h+", sub:"Scrolled"}
 ];
-const MODELS = [
-  "meta-llama/llama-3.3-70b-instruct:free",
-  "google/gemma-2-9b-it:free",
-  "mistralai/mistral-7b-instruct:free",
-  "meta-llama/llama-3.1-8b-instruct:free"
-];
-
 function load() {
   try { logs = JSON.parse(localStorage.getItem("dayos_logs") || "[]"); } catch { logs = []; }
   key = localStorage.getItem("dayos_key") || "";
